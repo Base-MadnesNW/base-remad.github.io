@@ -244,6 +244,61 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     }
 
+
+    /* Требования перед этажами (бейджи с иконками: мозг, удар, бизнес) */
+    .floor-requirements {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 22px 0 10px;
+    }
+
+    .req-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(22, 27, 38, 0.95);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-size: 0.84rem;
+      color: #e2e8f0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .req-chip:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .req-sub {
+      background: rgba(229, 57, 53, 0.15);
+      border: 1px solid rgba(229, 57, 53, 0.35);
+      color: #ff6b6b;
+      font-weight: 700;
+      font-size: 0.74rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .req-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+      filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.15));
+    }
+
+    .req-text {
+      line-height: 1.35;
+    }
+
+    .req-text strong {
+      color: var(--gold);
+      font-weight: 600;
+      margin-right: 2px;
+    }
+
     /* Спойлеры этажей и групп */
     .floor-block {
       margin-bottom: 14px;
@@ -745,6 +800,24 @@
         font-size: 0.8rem;
       }
 
+
+      .floor-requirements {
+        gap: 6px;
+        margin: 16px 0 8px;
+      }
+      .req-chip {
+        font-size: 0.78rem;
+        padding: 6px 10px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .req-sub {
+        font-size: 0.7rem;
+        padding: 1px 5px;
+      }
+      .req-icon {
+        font-size: 1.05rem;
+      }
       .floor-header {
         padding: 11px 14px;
         font-size: 0.95rem;
@@ -1172,11 +1245,11 @@
       { name: "Руди \"Аналитик\"", floor: "A-3", hp: "7k", dmg: "15-40", level: "23-40", exp: "150", gold: "—", pills: "200", pillsChance: "", item: "Физраствор", chance: "100%", drop: "Комната" },
       { name: "Аксель Шварценштайн", floor: "B-1", hp: "11k", dmg: "40-60", level: "25-44", exp: "145", gold: "50", pills: "—", pillsChance: "", item: "Поводок", chance: "100%", drop: "Комната, Перчатки" },
       { name: "Агнет \"Балерина\"", floor: "B-1", hp: "11k", dmg: "40-60", level: "25-44", exp: "145", gold: "50", pills: "—", pillsChance: "", item: "Тесак", chance: "100%", drop: "Комната, Аксессуар" },
-      { name: "Дорин Гамбринто", floor: "B-2", hp: "100k", dmg: "160-480", level: "30-50", exp: "200", gold: "75", pills: "—", pillsChance: "", item: "Оковы", chance: "100%", drop: "Комната, Обувь" },
-      { name: "Бруно Цугенкноф", floor: "B-2", hp: "130k", dmg: "140-430", level: "30-50", exp: "200", gold: "75", pills: "—", pillsChance: "", item: "Череп", chance: "100%", drop: "Комната, Штаны" },
+      { name: "Дорин Гамбрино", floor: "B-2", hp: "100k", dmg: "160-480", level: "30-50", exp: "200", gold: "75", pills: "—", pillsChance: "", item: "Оковы", chance: "100%", drop: "Комната, Обувь" },
+      { name: "Бруно Цугенкоф", floor: "B-2", hp: "130k", dmg: "140-430", level: "30-50", exp: "200", gold: "75", pills: "—", pillsChance: "", item: "Череп", chance: "100%", drop: "Комната, Штаны" },
       { name: "Сестра Каролайн", floor: "B-3", hp: "140k", dmg: "160-490", level: "34-55", exp: "300", gold: "125", pills: "—", pillsChance: "", item: "Халат", chance: "100%", drop: "Комната, Куртка" },
       { name: "Олаф Слатер", floor: "B-3", hp: "120k", dmg: "130-390", level: "34-55", exp: "300", gold: "125", pills: "—", pillsChance: "", item: "Топор", chance: "100%", drop: "Комната, Головной убор, Маска" },
-      { name: "Гордон Кирбероуз", floor: "C-1", hp: "200k", dmg: "200-600", level: "37-69", exp: "450", gold: "200", pills: "—", pillsChance: "", item: "Грабли", chance: "100%", drop: "Комната, Аксессуар" },
+      { name: "Гордон Кибероуз", floor: "C-1", hp: "200k", dmg: "200-600", level: "37-69", exp: "450", gold: "200", pills: "—", pillsChance: "", item: "Грабли", chance: "100%", drop: "Комната, Аксессуар" },
       { name: "Дуглас Макфадден", floor: "C-1", hp: "170k", dmg: "180-550", level: "37-69", exp: "450", gold: "200", pills: "—", pillsChance: "", item: "Пропуск", chance: "100%", drop: "Комната, Перчатки" },
       { name: "Броуди Кавальери", floor: "C-2", hp: "210k", dmg: "220-680", level: "44-77", exp: "525", gold: "250", pills: "—", pillsChance: "", item: "Кандалы", chance: "100%", drop: "Комната, Куртка" },
       { name: "Франческа Де ла Пизани", floor: "C-2", hp: "200k", dmg: "200-600", level: "44-77", exp: "525", gold: "250", pills: "—", pillsChance: "", item: "Шапка", chance: "100%", drop: "Комната, Штаны" },
@@ -1189,7 +1262,7 @@
       { name: "Аделаида Шальца", floor: "D-3", hp: "500k", dmg: "300-900", level: "62-113", exp: "1000", gold: "500", pills: "—", pillsChance: "", item: "Роза", chance: "20%", drop: "(М): Комната, Маска, Куртка, Оружие | (Ж): Комната, Перчатки, Головной убор" },
       { name: "Хуго Ван Дер Вейден", floor: "D-3", hp: "500k", dmg: "400-1200", level: "62-113", exp: "1000", gold: "500", pills: "—", pillsChance: "", item: "Клоунский нос", chance: "20%", drop: "(М): Комната, Куртка, Штаны, Головной убор | (Ж): Комната, Оружие, Штаны, Маска" },
       { name: "Иероним Георг фон Риттер", floor: "E-1", hp: "750k", dmg: "600-1800", level: "68-115", exp: "1175", gold: "600", pills: "—", pillsChance: "", item: "Механическая рука", chance: "20%", drop: "Комната, Обувь" },
-      { name: "Фрау Анжелина Буркхардт", floor: "E-1", hp: "800k", dmg: "500-1500", level: "68-115", exp: "1175", gold: "600", pills: "—", pillsChance: "", item: "Клешня", chance: "20%", drop: "Комната, Маска" },
+      { name: "Фрау Анжелика Буркхардт", floor: "E-1", hp: "800k", dmg: "500-1500", level: "68-115", exp: "1175", gold: "600", pills: "—", pillsChance: "", item: "Клешня", chance: "20%", drop: "Комната, Маска" },
       { name: "Карл Магнус Иверман", floor: "E-2", hp: "900k", dmg: "600-1800", level: "73-118", exp: "1350", gold: "700", pills: "—", pillsChance: "", item: "Наконечник копья", chance: "20%", drop: "Комната, Штаны, Оружие" },
       { name: "Отто Магнус Иверман", floor: "E-2", hp: "900k", dmg: "600-2000", level: "73-118", exp: "1350", gold: "700", pills: "—", pillsChance: "", item: "Лезвие косы", chance: "20%", drop: "Комната, Аксессуар, Оружие" },
       { name: "Кибер-адъюнкт v.3.5", floor: "E-3", hp: "950k", dmg: "500-1500", level: "77-120", exp: "1500", gold: "800", pills: "—", pillsChance: "", item: "Киберчереп", chance: "20%", drop: "Комната, Головной убор, Питомец" },
@@ -4403,27 +4476,100 @@
         const floorId = `floor-${floor}`;
         const isOpen = filter !== "" ? "open" : "";
 
-        let topText = "";
-        if (floor === "A") topText = "*А2* РАБОТА -Р- Ординаторская — 2 раза 630 энергии | *A3* Победа -П- Крошка Сью — 5 раз";
-        if (floor === "B") topText = "*В1* БИЗНЕС -Б- ПРОХОДНАЯ -А3 - 1 лвл | *В2* РАБОТА -Р- Заведующий — 3 раза 780 энергии | *В3* Победа -П- Бруно Цугенкноф — 5 раз";
-        if (floor === "C") topText = "*С1* БИЗНЕС -Б- ИССЛЕДОВАТЕЛЬСКАЯ -B1 - 1 лвл | *С2* РАБОТА -Р- Смотритель архива — 5 раз 1580 энергии | *С3* Победа -П- Броуди Кавальери — 10 раз";
-        if (floor === "D") topText = "*D1* БИЗНЕС -Б- ТРАУРНАЯ -C3 - 1 лвл | *D2* РАБОТА -Р- Инспектор — 5 раз 3440 энергии | *D3* Победа -П- Геррод и Герда — 15 раз";
-        if (floor === "E") topText = "*E1* БИЗНЕС -Б- ТРАНСФОРМАТОР -D3 - 5 лвл | *E2* РАБОТА -Р- Амбулатория — 10 раз 7120 энергии | *E3* Победа -П- Карл Магнус Иверман — 25 раз";
-        if (floor === "F") topText = "*F1* БИЗНЕС -Б- РЕНТГЕНОЛОГИЧЕСКАЯ СЛУЖБА -E3 - 5 лвл | *F2* РАБОТА -Р- Логово палача — 20 раз 17520 энергии | *F3* Победа -П- Бабушка — 35 раз";
-        if (floor === "G") topText = "*G1* БИЗНЕС -Б- ТРАУРНАЯ -C3 - 5 лвл | *G2* РАБОТА -Р- Охота на вредителей — 15 раз 2985 энергии | *G3* Победа -П- Лоботом — 25 раз";
-        if (floor === "H") topText = "*H1* БИЗНЕС -Б- ПРИТОН -F3 - 5 лвл | *H2* РАБОТА -Р- Очистка от пауков — 20 раз 8400 энергии | *H3* Победа -П- Самсон — 45 раз";
-        if (floor === "I") topText = "*I1* БИЗНЕС -Б- МЕСТО ДЛЯ МОЛИТВ -H3 - 3 лвл | *I2* РАБОТА -Р- Развалины — 25 раз 7825 энергии | *I3* Победа -П- Весельчаки — 55 раз";
-        if (floor === "J") topText = "*J1* БИЗНЕС -Б- ЧЕРНАЯ ДЫРА -I3 - 6 лвл | *J2* РАБОТА -Р- Блиндаж — 25 раз 8225 энергии | *J3* Победа -П- Эо Арахнон — 65 раз";
-        if (floor === "K") topText = "*K1* БИЗНЕС -Б- ТОТЕМ НЕКРОМАНТА -J3 - 6 лвл | *K2* РАБОТА -Р- Саботаж — 30 раз 17970 энергии | *K3* Победа -П- Колосс — 75 раз";
-        if (floor === "L") topText = "*L1* БИЗНЕС -Б- МУТАГЕННЫЕ КАПСУЛЫ -K3 - 6 лвл | *L2* РАБОТА -Р- Производство — 6 раз 12624 энергии | *L3* Победа -П- Госпожа Де Вит — 85 раз";
-        if (floor === "M") topText = "*M1* БИЗНЕС -Б- АЛТАРЬ НЕНАВИСТИ -$-1 - 1 лвл | *M2* БИЗНЕС -Б- АЛТАРЬ ЯРОСТИ -$-2 - 6 лвл | *M3* БИЗНЕС -Б- АЛТАРЬ СТРАХА -$-3 - 6 лвл";
-        if (floor === "N") topText = "*N1* Коллекция №629 | *N2* БИЗНЕС -Б- ОРАНЖЕРЕЯ -N1 - 1 лвл | *N3* БИЗНЕС -Б- ОСТАНКИ -N1 - 1 лвл";
-        if (floor === "O") topText = "*O1* Боевой ранг 200k, Кости 71 ур, Ярость 50k | *O2* Ранг 300k, Кости 71 ур, Ярость 60k | *O3* Ранг 1kk, Кости 72 ур, Ярость 70k";
-        if (floor === "$") topText = "Рейдовые и специальные элитные боссы";
+        const floorRequirements = {
+      "A": [
+        { sub: "A-2", icon: "🧠", title: "Работа", desc: "Ординаторская — 2 раза (630 энергии)" },
+        { sub: "A-3", icon: "🥊", title: "Победа", desc: "Крошка Сью — 5 раз" }
+      ],
+      "B": [
+        { sub: "B-1", icon: "🏢", title: "Бизнес", desc: "Проходная (А-3) — 1 ур." },
+        { sub: "B-2", icon: "🧠", title: "Работа", desc: "Заведующий — 3 раза (780 энергии)" },
+        { sub: "B-3", icon: "🥊", title: "Победа", desc: "Бруно Цугенкоф — 5 раз" }
+      ],
+      "C": [
+        { sub: "C-1", icon: "🏢", title: "Бизнес", desc: "Исследовательская (B-1) — 1 ур." },
+        { sub: "C-2", icon: "🧠", title: "Работа", desc: "Смотритель архива — 5 раз (1580 энергии)" },
+        { sub: "C-3", icon: "🥊", title: "Победа", desc: "Броуди Кавальери — 10 раз" }
+      ],
+      "D": [
+        { sub: "D-1", icon: "🏢", title: "Бизнес", desc: "Траурная (C-3) — 1 ур." },
+        { sub: "D-2", icon: "🧠", title: "Работа", desc: "Инспектор — 5 раз (3440 энергии)" },
+        { sub: "D-3", icon: "🥊", title: "Победа", desc: "Геррод и Герда — 15 раз" }
+      ],
+      "E": [
+        { sub: "E-1", icon: "🏢", title: "Бизнес", desc: "Трансформатор (D-3) — 5 ур." },
+        { sub: "E-2", icon: "🧠", title: "Работа", desc: "Амбулатория — 10 раз (7120 энергии)" },
+        { sub: "E-3", icon: "🥊", title: "Победа", desc: "Карл Магнус Иверман — 25 раз" }
+      ],
+      "F": [
+        { sub: "F-1", icon: "🏢", title: "Бизнес", desc: "Рентгенологическая служба (E-3) — 5 ур." },
+        { sub: "F-2", icon: "🧠", title: "Работа", desc: "Логово палача — 20 раз (17520 энергии)" },
+        { sub: "F-3", icon: "🥊", title: "Победа", desc: "Бабушка — 35 раз" }
+      ],
+      "G": [
+        { sub: "G-1", icon: "🏢", title: "Бизнес", desc: "Траурная (C-3) — 5 ур." },
+        { sub: "G-2", icon: "🧠", title: "Работа", desc: "Охота на вредителей — 15 раз (2985 энергии)" },
+        { sub: "G-3", icon: "🥊", title: "Победа", desc: "Лоботом — 25 раз" }
+      ],
+      "H": [
+        { sub: "H-1", icon: "🏢", title: "Бизнес", desc: "Притон (F-3) — 5 ур." },
+        { sub: "H-2", icon: "🧠", title: "Работа", desc: "Очистка от пауков — 20 раз (8400 энергии)" },
+        { sub: "H-3", icon: "🥊", title: "Победа", desc: "Самсон — 45 раз" }
+      ],
+      "I": [
+        { sub: "I-1", icon: "🏢", title: "Бизнес", desc: "Место для молитв (H-3) — 3 ур." },
+        { sub: "I-2", icon: "🧠", title: "Работа", desc: "Развалины — 25 раз (7825 энергии)" },
+        { sub: "I-3", icon: "🥊", title: "Победа", desc: "Весельчаки — 55 раз" }
+      ],
+      "J": [
+        { sub: "J-1", icon: "🏢", title: "Бизнес", desc: "Чёрная дыра (I-3) — 6 ур." },
+        { sub: "J-2", icon: "🧠", title: "Работа", desc: "Блиндаж — 25 раз (8225 энергии)" },
+        { sub: "J-3", icon: "🥊", title: "Победа", desc: "Эо Арахнон — 65 раз" }
+      ],
+      "K": [
+        { sub: "K-1", icon: "🏢", title: "Бизнес", desc: "Тотем некроманта (J-3) — 6 ур." },
+        { sub: "K-2", icon: "🧠", title: "Работа", desc: "Саботаж — 30 раз (17970 энергии)" },
+        { sub: "K-3", icon: "🥊", title: "Победа", desc: "Колосс — 75 раз" }
+      ],
+      "L": [
+        { sub: "L-1", icon: "🏢", title: "Бизнес", desc: "Мутагенные капсулы (K-3) — 6 ур." },
+        { sub: "L-2", icon: "🧠", title: "Работа", desc: "Производство — 6 раз (12624 энергии)" },
+        { sub: "L-3", icon: "🥊", title: "Победа", desc: "Госпожа Де Вит — 85 раз" }
+      ],
+      "M": [
+        { sub: "M-1", icon: "🏢", title: "Бизнес", desc: "Алтарь ненависти ($-1) — 1 ур." },
+        { sub: "M-2", icon: "🏢", title: "Бизнес", desc: "Алтарь ярости ($-2) — 6 ур." },
+        { sub: "M-3", icon: "🏢", title: "Бизнес", desc: "Алтарь страха ($-3) — 6 ур." }
+      ],
+      "N": [
+        { sub: "N-1", icon: "📜", title: "Коллекция", desc: "Собрать коллекцию №629" },
+        { sub: "N-2", icon: "🏢", title: "Бизнес", desc: "Оранжерея (N-1) — 1 ур." },
+        { sub: "N-3", icon: "🏢", title: "Бизнес", desc: "Останки (N-1) — 1 ур." }
+      ],
+      "O": [
+        { sub: "O-1", icon: "🏆", title: "Требования", desc: "Боевой ранг 200k • Кости 71 ур. • Ярость 50k" },
+        { sub: "O-2", icon: "🏆", title: "Требования", desc: "Боевой ранг 300k • Кости 71 ур. • Ярость 60k" },
+        { sub: "O-3", icon: "🏆", title: "Требования", desc: "Боевой ранг 1kk • Кости 72 ур. • Ярость 70k" }
+      ],
+      "$": [
+        { sub: "Элита", icon: "⭐", title: "Особый этаж", desc: "Рейдовые и специальные элитные боссы" }
+      ]
+    };
 
-        if (topText !== "") {
-          container.innerHTML += `<div class="floor-note">${topText}</div>`;
-        }
+    const reqs = floorRequirements[floor];
+    if (reqs && reqs.length > 0) {
+      let reqHtml = `<div class="floor-requirements">`;
+      reqs.forEach(r => {
+        reqHtml += `
+          <div class="req-chip">
+            <span class="req-sub">${r.sub}</span>
+            <span class="req-icon">${r.icon}</span>
+            <span class="req-text"><strong>${r.title}:</strong> ${r.desc}</span>
+          </div>`;
+      });
+      reqHtml += `</div>`;
+      container.innerHTML += reqHtml;
+    }
 
         let html = `
           <div class="floor-block">
@@ -4453,7 +4599,7 @@
 
           const createCheckboxes = (arr, prefix) => {
             return arr.map(item => {
-              if (!item || item === "Комната") return "";
+              if (!item || item === "Комната" || item.startsWith("Мутаген") || item.startsWith("Ключ") || item.startsWith("Элемент")) return "";
 
               const cleanName = item.replace(/\(x\d+\)/g, '').trim();
               const id = `drop_${b.name}_${prefix}_${cleanName}`;
