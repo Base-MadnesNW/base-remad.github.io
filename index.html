@@ -742,6 +742,26 @@
         padding: 0 10px;
       }
 
+
+      .roach-counter-widget {
+        top: 12px;
+        right: 10px;
+        padding: 5px 10px;
+        gap: 7px;
+        border-radius: 9px;
+      }
+      .roach-widget-icon {
+        font-size: 1.3rem;
+      }
+      .roach-widget-num {
+        font-size: 0.95rem;
+      }
+      .roach-widget-label {
+        font-size: 0.65rem;
+      }
+      .roach-widget-tier {
+        font-size: 0.7rem;
+      }
       header {
         padding: 22px 0 12px;
       }
@@ -1024,6 +1044,115 @@
       margin-top: 4px;
     }
 
+
+    /* Виджет счётчика тараканов (справа вверху) */
+    .header-container {
+      position: relative;
+    }
+
+    .roach-counter-widget {
+      position: absolute;
+      right: 20px;
+      top: 24px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(19, 23, 33, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 14px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 90;
+    }
+
+    .roach-counter-widget:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .roach-widget-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.25s ease, filter 0.3s ease;
+    }
+
+    .roach-counter-widget:hover .roach-widget-icon {
+      transform: scale(1.18) rotate(12deg);
+    }
+
+    .roach-widget-body {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .roach-widget-top {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+    }
+
+    .roach-widget-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .roach-widget-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .roach-widget-tier {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.2px;
+      line-height: 1.2;
+      transition: color 0.3s ease;
+    }
+
+    .pulse-anim {
+      animation: counterPulse 0.4s ease;
+    }
+
+    @keyframes counterPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.12); }
+      100% { transform: scale(1); }
+    }
+
+    /* Всплывающий текст +1 при убийстве таракана */
+    .floating-kill-text {
+      position: fixed;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 1.25rem;
+      color: #ff4757;
+      text-shadow: 0 0 10px rgba(255, 71, 87, 0.8), 0 2px 4px rgba(0,0,0,0.8);
+      pointer-events: none;
+      z-index: 10000;
+      animation: floatUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translate(0, 0) scale(0.8); }
+      50% { opacity: 1; transform: translate(0, -35px) scale(1.15); }
+      100% { opacity: 0; transform: translate(0, -60px) scale(1); }
+    }
+
     /* --- СТИЛИ ДЛЯ ТАРАКАНА --- */
     #cockroach {
       position: fixed;
@@ -1052,7 +1181,17 @@
 </head>
 <body>
 
-  <header class="container">
+  <header class="container header-container">
+    <div class="roach-counter-widget" id="roachCounterWidget" onclick="focusRoach()" title="Общий счётчик убийств таракана всеми игроками. Кликни, чтобы найти!">
+      <span class="roach-widget-icon" id="roachWidgetIcon">🪳</span>
+      <div class="roach-widget-body">
+        <div class="roach-widget-top">
+          <span class="roach-widget-num" id="roachCountVal">0</span>
+          <span class="roach-widget-label">убито</span>
+        </div>
+        <div class="roach-widget-tier" id="roachTierVal">Ур. 1: Обычный</div>
+      </div>
+    </div>
     <h1>База знаний Безумия</h1>
     <div class="subtitle"><span class="online-dot"></span>Справочник буйных, бизнесов, заначек и квестов</div>
   </header>
@@ -4958,7 +5097,21 @@
       resEl.innerText = resultText;
     }
 
-    // --- ТАРАКАН ---
+    // --- СИСТЕМА УРОВНЕЙ И СЧЁТЧИКА ТАРАКАНА (10 УРОВНЕЙ) ---
+    const roachTiers = [
+      { level: 1, name: "Обычный", min: 0, icon: "🪳", color: "#8b95a5", filter: "none" },
+      { level: 2, name: "Бронзовый", min: 10, icon: "🪳", color: "#cd7f32", filter: "sepia(0.8) hue-rotate(-20deg) saturate(2.5) drop-shadow(0 0 8px #cd7f32)" },
+      { level: 3, name: "Серебряный", min: 25, icon: "🪳", color: "#e2e8f0", filter: "grayscale(1) brightness(1.7) contrast(1.2) drop-shadow(0 0 10px #e2e8f0)" },
+      { level: 4, name: "Золотой", min: 50, icon: "🪳", color: "#feca57", filter: "sepia(1) saturate(5) hue-rotate(15deg) brightness(1.2) drop-shadow(0 0 12px #feca57)" },
+      { level: 5, name: "Платиновый", min: 100, icon: "🪳", color: "#54a0ff", filter: "brightness(1.4) hue-rotate(170deg) saturate(3) drop-shadow(0 0 14px #54a0ff)" },
+      { level: 6, name: "Изумрудный мутант", min: 200, icon: "🪲", color: "#2ed573", filter: "hue-rotate(90deg) saturate(4) drop-shadow(0 0 15px #2ed573)" },
+      { level: 7, name: "Рубиновый берсерк", min: 350, icon: "🦂", color: "#ff4757", filter: "hue-rotate(330deg) saturate(5) drop-shadow(0 0 16px #ff4757)" },
+      { level: 8, name: "Алмазный титан", min: 500, icon: "💎", color: "#70a1ff", filter: "drop-shadow(0 0 18px #70a1ff) brightness(1.3)" },
+      { level: 9, name: "Теневой владыка", min: 750, icon: "🦹", color: "#c56cf0", filter: "hue-rotate(260deg) saturate(4) drop-shadow(0 0 20px #c56cf0)" },
+      { level: 10, name: "Космический Пожиратель", min: 1000, icon: "👾", color: "#ff9ff3", filter: "drop-shadow(0 0 22px #ff9ff3) drop-shadow(0 0 10px #00d2d3)" }
+    ];
+
+    let globalRoachKills = 0;
     let roachElement = document.getElementById("cockroach");
     let isSquashed = false;
     let roachX = 0;
@@ -4968,10 +5121,86 @@
     let roachSpeedY = 0.5;
     let roachDirY = 1;
 
+    function getRoachTier(kills) {
+      let current = roachTiers[0];
+      for (const t of roachTiers) {
+        if (kills >= t.min) current = t;
+      }
+      return current;
+    }
+
+    function updateRoachUI(kills, animate = false) {
+      const tier = getRoachTier(kills);
+
+      const valEl = document.getElementById("roachCountVal");
+      const tierEl = document.getElementById("roachTierVal");
+      const iconEl = document.getElementById("roachWidgetIcon");
+      const widgetEl = document.getElementById("roachCounterWidget");
+
+      if (valEl) valEl.innerText = Number(kills).toLocaleString('ru-RU');
+      if (tierEl) {
+        tierEl.innerText = `Ур. ${tier.level}: ${tier.name}`;
+        tierEl.style.color = tier.color;
+      }
+      if (iconEl) {
+        iconEl.innerHTML = tier.icon;
+        iconEl.style.filter = tier.filter;
+      }
+      if (widgetEl && animate) {
+        widgetEl.classList.remove('pulse-anim');
+        void widgetEl.offsetWidth; // trigger reflow
+        widgetEl.classList.add('pulse-anim');
+      }
+
+      // Обновляем бегающего таракана, если он жив
+      if (roachElement && !isSquashed) {
+        roachElement.innerHTML = tier.icon;
+        roachElement.style.filter = tier.filter;
+      }
+    }
+
+    function loadGlobalRoachKills() {
+      // 1. Быстрый показ из локального хранилища
+      const cached = parseInt(localStorage.getItem("roach_kills_cache")) || 0;
+      globalRoachKills = cached;
+      updateRoachUI(globalRoachKills, false);
+
+      // 2. Запрос общего счётчика из бесплатного открытого API
+      fetch("https://countapi.mileshilliard.com/api/v1/get/madness_nw_roach_kills")
+        .then(r => r.json())
+        .then(data => {
+          if (data && typeof data.value === 'number') {
+            globalRoachKills = Math.max(globalRoachKills, data.value);
+            localStorage.setItem("roach_kills_cache", globalRoachKills);
+            updateRoachUI(globalRoachKills, false);
+          }
+        })
+        .catch(() => {
+          // Если сеть недоступна, остаётся локальный кэш
+        });
+    }
+
+    function showFloatingKillText(text, x, y) {
+      const el = document.createElement("div");
+      el.className = "floating-kill-text";
+      el.innerText = text;
+      el.style.left = `${Math.max(10, Math.min(window.innerWidth - 100, x))}px`;
+      el.style.top = `${Math.max(10, y - 20)}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }
+
+    function focusRoach() {
+      if (roachElement) {
+        roachElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        showFloatingKillText("Таракан здесь! Лови! 🪳", roachX, roachY);
+      }
+    }
+
     function moveRoach() {
       if (isSquashed || !roachElement) return;
 
-      const maxWidth = window.innerWidth - 40;
+      const maxWidth = window.innerWidth - 45;
       roachX += roachSpeedX * roachDirectionX;
 
       if (roachX >= maxWidth) {
@@ -4984,8 +5213,8 @@
         roachElement.style.transform = "scaleX(-1)"; 
       }
 
-      const minY = window.innerHeight - 100;
-      const maxY = window.innerHeight - 20;
+      const minY = window.innerHeight - 90;
+      const maxY = window.innerHeight - 25;
 
       roachY += roachSpeedY * roachDirY;
 
@@ -5010,24 +5239,48 @@
     function squashRoach() {
       if (isSquashed || !roachElement) return;
       isSquashed = true;
-      
+
+      // Анимация раздавливания
       roachElement.classList.remove('running');
-      roachElement.innerHTML = "💥"; 
-      
+      roachElement.innerHTML = "💥";
+      roachElement.style.filter = "none";
+
+      // Мгновенное обновление локально
+      globalRoachKills++;
+      localStorage.setItem("roach_kills_cache", globalRoachKills);
+      updateRoachUI(globalRoachKills, true);
+
+      // Всплывающий текст
+      showFloatingKillText("+1 💥", roachX, roachY);
+
+      // Фоновая отправка в общий глобальный счётчик
+      fetch("https://countapi.mileshilliard.com/api/v1/hit/madness_nw_roach_kills")
+        .then(r => r.json())
+        .then(data => {
+          if (data && typeof data.value === 'number' && data.value > globalRoachKills) {
+            globalRoachKills = data.value;
+            localStorage.setItem("roach_kills_cache", globalRoachKills);
+            updateRoachUI(globalRoachKills, false);
+          }
+        })
+        .catch(() => {});
+
+      // Возрождение таракана
       setTimeout(() => {
         roachElement.classList.add('squashed');
-        
         setTimeout(() => {
           isSquashed = false;
-          roachElement.innerHTML = "🪳";
+          const tier = getRoachTier(globalRoachKills);
+          roachElement.innerHTML = tier.icon;
+          roachElement.style.filter = tier.filter;
           roachX = 0;
           roachY = window.innerHeight - 50;
           roachDirectionX = 1;
           roachDirY = 1;
           roachElement.classList.remove('squashed');
-          moveRoach(); 
-        }, 5000);
-      }, 1500);
+          moveRoach();
+        }, 4000);
+      }, 1200);
     }
 
     // Инициализация
@@ -5035,6 +5288,7 @@
     renderBusinesses();
     renderQuests();
     renderThanks();
+    loadGlobalRoachKills();
     if (roachElement) {
       moveRoach();
     }
