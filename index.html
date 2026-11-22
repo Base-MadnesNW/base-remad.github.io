@@ -2404,7 +2404,7 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
 
       // Анимация раздавливания
       roachElement.classList.remove('running');
-      roachElement.innerHTML = "💥";
+      document.getElementById("cockroach").innerHTML = "💥";
       roachElement.style.filter = "none";
 
       // Мгновенное обновление локально
@@ -2433,7 +2433,7 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
         setTimeout(() => {
           isSquashed = false;
           const tier = getRoachTier(globalRoachKills);
-          roachElement.innerHTML = tier.icon;
+          document.getElementById("cockroach").innerHTML = tier.icon;
           roachElement.style.filter = tier.filter;
           roachX = Math.max(30, Math.round(window.innerWidth * 0.2));
           roachY = Math.max(100, window.innerHeight - 140);
@@ -2511,31 +2511,39 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
         requestAnimationFrame(moveMyRoach);
     }
 
-   function squashMyRoach(e) {
-    if (e) { e.preventDefault(); e.stopPropagation(); }
-    if (myRoachIsSquashed) return;
-    myRoachIsSquashed = true;
+       function squashMyRoach(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        if (myRoachIsSquashed) return;
+        myRoachIsSquashed = true;
 
-    const iconEl = document.getElementById("myRoachIcon");
-    if (!iconEl) return;
+        const iconEl = document.getElementById("myRoachIcon");
+        if (!iconEl) return;
 
-    iconEl.innerText = "💥";
-    iconEl.style.filter = "none";
+        // Меняем на взрыв
+        iconEl.innerText = "💥";
+        iconEl.style.filter = "none";
 
-    myRoachKills++;
-    localStorage.setItem("my_roach_kills", myRoachKills);
-    updateMyRoachUI();
-
-    setTimeout(() => {
-        myRoachIsSquashed = false;
-        const tier = getRoachTier(myRoachKills);
-        iconEl.innerHTML = tier.icon;
-        iconEl.style.filter = tier.filter;
+        // Увеличиваем счетчик
+        myRoachKills++;
+        localStorage.setItem("my_roach_kills", myRoachKills);
+        updateMyRoachUI();
         
-        // ВОТ ЭТА СТРОКА ЗАПУСКАЕТ ЕГО ЗАНОВО
-        moveMyRoach(); 
-    }, 2000);
-}
+        // Отправляем на сервер
+        if (typeof sendToServer === "function") {
+            sendToServer(myRoachNick, myRoachKills);
+        }
+
+        // Возрождение через 2 секунды
+        setTimeout(() => {
+            myRoachIsSquashed = false;
+            const tier = getRoachTier(myRoachKills);
+            iconEl.innerHTML = tier.icon;
+            iconEl.style.filter = tier.filter;
+            
+            // Принудительно запускаем движение заново
+            moveMyRoach();
+        }, 2000);
+    }
 
     function setMyRoachNick() {
         let newNick = prompt("Введите ник для вашего таракана:", myRoachNick);
