@@ -67,22 +67,7 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-   
-    /* ники px */ 
-.roach-nick {
-    font-size: 11px;
-    font-weight: bold;
-    color: #fff; /* Белый цвет для читаемости */
-    text-shadow: 1px 1px 2px #000, 0 0 5px #000; /* Тень, чтобы читалось на фоне */
-    white-space: nowrap;
-    margin-bottom: -5px; /* Прижимаем ближе к таракану */
-    pointer-events: none; /* Чтобы ник не мешал кликать */
-    background: transparent;
-    border: none;
-    padding: 0;
-    transform: scaleX(-1); /* Переворачиваем ник, чтобы он не был зеркальным, если контейнер перевернут */
-}
-    
+
     /* Ограничиваем общую ширину страницы до комфортных 1220px */
     .container {
       width: 100%;
@@ -1005,6 +990,9 @@
       color: var(--text-muted);
       line-height: 1.6;
     }
+
+   
+    
     .footer .clan {
       font-weight: 700;
       color: var(--gold);
@@ -1242,21 +1230,6 @@
 <body>
 
   <header class="container header-container">
-  
-    <!-- ЛИЧНЫЙ СЧЕТЧИК В ШАПКЕ (СЛЕВА) -->
-    <div class="roach-counter-widget" id="myRoachCounterWidget" style="left: 20px; right: auto; cursor: default;">
-        <span class="roach-widget-icon" id="myRoachWidgetIcon">🐛</span>
-        <div class="roach-widget-body">
-            <div class="roach-widget-top">
-                <span class="roach-widget-num" id="myRoachCountVal">0</span>
-                <span class="roach-widget-label">убито</span>
-            </div>
-            <div class="roach-widget-tier" id="myRoachTierVal">Ур. 1: Обычный</div>
-        </div>
-        <button onclick="setMyRoachNick()" style="background: #333; border: 1px solid #555; color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-left: 5px; cursor: pointer;">Ник</button>
-        <button onclick="toggleRoachTop()" style="background: #e74c3c; border: none; color: #fff; font-size: 10px; padding: 2px 4px; border-radius: 4px; margin-left: 2px; cursor: pointer;">Топ</button>
-    </div>
-    
     <div class="roach-counter-widget" id="roachCounterWidget" onclick="focusRoach()" title="Общий счётчик убийств таракана всеми игроками. Кликни, чтобы найти!">
       <span class="roach-widget-icon" id="roachWidgetIcon">🪳</span>
       <div class="roach-widget-body">
@@ -1297,13 +1270,6 @@
       <div id="bossList"></div>
     </section>
 
-    <!-- ВЫДВИГАЮЩИЙСЯ СПИСОК ТОПА -->
-<div id="roachTopPanel" style="display: none; position: fixed; top: 100px; left: 20px; background: rgba(19, 23, 33, 0.95); border: 1px solid #444; border-radius: 12px; padding: 15px; min-width: 240px; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-    <h4 style="margin: 0 0 10px 0; color: #f1c40f; font-size: 14px; text-align: center;">🏆 Топ убийц</h4>
-    <div id="roachTopListContent" style="font-size: 13px; color: #ccc;">Загрузка...</div>
-    <button onclick="toggleRoachTop()" style="width: 100%; margin-top: 10px; background: #333; border: 1px solid #555; color: #fff; padding: 5px; border-radius: 4px; cursor: pointer;">Закрыть</button>
-</div>
-    
     <!-- 2. БИЗНЕСЫ -->
     <section id="businesses" class="tab-section">
       <div class="toolbar">
@@ -1452,20 +1418,34 @@
     <div class="author">®Killproks, помощник проекта - •NW•Osangar</div>
   </footer>
 
- <!-- ОБЩИЙ ТАРАКАН -->
-  <div id="globalRoachContainer" style="position: fixed; z-index: 9999; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-    <div class="roach-nick">•NW•</div>
-    <div id="cockroach" style="font-size: 32px;" onclick="squashRoach(event)" ontouchstart="squashRoach(event)">🪳</div>
-  </div>
-
-  <!-- ЛИЧНЫЙ ТАРАКАН -->
-  <div id="myRoachContainer" style="position: fixed; z-index: 9998; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-    <div class="roach-nick" id="myRoachNick">Игрок</div>
-    <div id="myRoachIcon" style="font-size: 28px;" onclick="squashMyRoach(event)" ontouchstart="squashMyRoach(event)">🐛</div>
-  </div>
+  <!-- Личный таракан -->
+    <div id="myRoachContainer" onclick="squashMyRoach(event)" ontouchstart="squashMyRoach(event)" style="position: fixed; bottom: 50px; left: 50px; z-index: 9998; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
+    <div id="myRoachNick" style="background: rgba(0,0,0,0.8); color: #2ecc71; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; border: 1px solid #2ecc71; margin-bottom: 2px; white-space: nowrap;">Мой ник</div>
+    <div id="myRoachIcon" style="font-size: 25px;">🪳</div>
+    </div>
   
+  <!-- Таракан -->
+  <div id="cockroach" onclick="squashRoach(event)" ontouchstart="squashRoach(event)">🪳</div>
+
+  <!-- ЛИЧНЫЙ СЧЕТЧИК (ПАНЕЛЬ СПРАВА ВНИЗУ) -->
+<div id="myRoachWidget" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.9); padding: 10px; border-radius: 8px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; border: 1px solid #444; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+    <div style="display: flex; align-items: center; gap: 5px;">
+        <span style="font-size: 20px;">🐛</span>
+        <span style="color: #aaa; font-size: 12px;">Мои убийства:</span>
+        <span id="myRoachCounterVal" style="color: #2ecc71; font-weight: bold; font-size: 16px;">0</span>
+    </div>
+    <div id="myRoachCounterTier" style="font-size: 11px; color: #888; margin-top: 4px;">Ур. 1: Обычный</div>
+    <button onclick="setMyRoachNick()" style="margin-top: 5px; background: #333; border: 1px solid #555; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;">Сменить ник</button>
+    <button onclick="toggleTopList()" style="margin-top: 5px; background: #e74c3c; border: none; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;">🏆 Топ игроков</button>
+</div>
+
+<!-- ВЫДВИГАЮЩИЙСЯ СПИСОК ТОПА -->
+<div id="myRoachTopList" style="display: none; position: fixed; bottom: 120px; right: 10px; background: #222; border: 1px solid #444; border-radius: 8px; padding: 10px; min-width: 200px; z-index: 9999; text-align: left;">
+    <h4 style="margin: 0 0 5px 0; color: #f1c40f; font-size: 12px;">🏆 Топ убийц</h4>
+    <div id="topListContent" style="font-size: 12px; color: #ccc;">Загрузка...</div>
+</div>
+
   <script>
-    
     // --- ДАННЫЕ БОССОВ ---
     const bosses = [
       { name: "Генри Литен", floor: "A-1", hp: "600", dmg: "5-20", level: "7-15", exp: "25", gold: "—", pills: "—", pillsChance: "", item: "Ошейник", chance: "100%", drop: "Комната" },
@@ -2234,13 +2214,6 @@
       { level: 10, name: "Космический Пожиратель", min: 10000, icon: "👾", color: "#ff9ff3", filter: "drop-shadow(0 0 22px #ff9ff3) drop-shadow(0 0 10px #00d2d3)" }
     ];
 
- function getRoachTier(kills) {
-      let current = roachTiers[0];
-      for (const t of roachTiers) { if (kills >= t.min) current = t; }
-      return current;
-    }
-
-     // --- Общий таракан ---
     let globalRoachKills = 0;
     let roachElement = document.getElementById("cockroach");
     let isSquashed = false;
@@ -2251,16 +2224,23 @@
     let roachSpeedY = 0.6;
     let roachDirY = 1;
     let summonTimeout = null;
-     // --- ЛИЧНЫЙ ТАРАКАН ---
+    
+    // --- ЛИЧНЫЙ ТАРАКАН ---
     let myRoachKills = parseInt(localStorage.getItem("my_roach_kills")) || 0;
     let myRoachNick = localStorage.getItem("my_roach_nick") || "Игрок";
-    let myRoachX = 50;
-    let myRoachY = window.innerHeight - 150;
-    let myRoachDirX = 1;
-    let myRoachDirY = 1;
-    let myRoachSpeed = 1.2;
-    let myRoachIsSquashed = false;
+    let myRoachIconEl = document.getElementById("myRoachIcon");
+    let myRoachNickEl = document.getElementById("myRoachNick");
 
+    // Устанавливаем начальный ник
+    if (myRoachNickEl) myRoachNickEl.innerText = myRoachNick;
+
+    function getRoachTier(kills) {
+      let current = roachTiers[0];
+      for (const t of roachTiers) {
+        if (kills >= t.min) current = t;
+      }
+      return current;
+    }
 
     function updateRoachUI(kills, animate = false) {
       const tier = getRoachTier(kills);
@@ -2284,6 +2264,23 @@
         void widgetEl.offsetWidth; // trigger reflow
         widgetEl.classList.add('pulse-anim');
       }
+
+      function updateMyRoachUI(animate = false) {
+      const tier = getRoachTier(myRoachKills);
+      const iconEl = document.getElementById("myRoachIcon");
+      const counterEl = document.getElementById("myRoachCounterVal");
+      const tierEl = document.getElementById("myRoachCounterTier");
+
+    if (iconEl) {
+        iconEl.innerHTML = tier.icon;
+        iconEl.style.filter = tier.filter;
+    }
+    if (counterEl) counterEl.innerText = myRoachKills;
+    if (tierEl) {
+        tierEl.innerText = `Ур. ${tier.level}: ${tier.name}`;
+        tierEl.style.color = tier.color;
+    }
+}
 
       // Обновляем бегающего таракана, если он жив
       if (roachElement && !isSquashed) {
@@ -2337,8 +2334,8 @@
       // Призываем таракана прямо в видимый центр экрана игрока
       roachX = Math.round(window.innerWidth / 2 - 16);
       roachY = Math.round(window.innerHeight / 2 - 16);
-document.getElementById('globalRoachContainer').style.left = roachX + "px";
-document.getElementById('globalRoachContainer').style.top = roachY + "px";
+      roachElement.style.left = roachX + "px";
+      roachElement.style.top = roachY + "px";
 
       // Включаем яркий маяк-пульсацию вокруг таракана
       roachElement.classList.add("roach-summon-beacon");
@@ -2381,8 +2378,8 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
         roachDirY = 1;
       }
 
-document.getElementById('globalRoachContainer').style.left = roachX + "px";
-document.getElementById('globalRoachContainer').style.top = roachY + "px";
+      roachElement.style.left = roachX + "px";
+      roachElement.style.top = roachY + "px";
 
       if (!roachElement.classList.contains('running')) {
         roachElement.classList.add('running');
@@ -2390,7 +2387,39 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
 
       requestAnimationFrame(moveRoach);
     }
+function setMyRoachNick() {
+    let newNick = prompt("Введите ник для вашего таракана:", myRoachNick);
+    if (newNick && newNick.trim() !== "") {
+        myRoachNick = newNick.trim();
+        localStorage.setItem("my_roach_nick", myRoachNick);
+        if (myRoachNickEl) myRoachNickEl.innerText = myRoachNick;
+    }
+}
 
+    function squashMyRoach(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (!myRoachIconEl) return;
+
+    // Анимация
+    myRoachIconEl.innerText = "💥";
+    myRoachIconEl.style.filter = "none";
+
+    // Увеличиваем счетчик
+    myRoachKills++;
+    localStorage.setItem("my_roach_kills", myRoachKills);
+    
+    // Обновляем интерфейс
+    updateMyRoachUI(true);
+
+    // Возрождение через 1.5 секунды
+    setTimeout(() => {
+        const tier = getRoachTier(myRoachKills);
+        myRoachIconEl.innerHTML = tier.icon;
+        myRoachIconEl.style.filter = tier.filter;
+    }, 1500);
+}
+    
+    
     function squashRoach(e) {
       if (e) {
         if (e.cancelable) e.preventDefault();
@@ -2404,7 +2433,7 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
 
       // Анимация раздавливания
       roachElement.classList.remove('running');
-      document.getElementById("cockroach").innerHTML = "💥";
+      roachElement.innerHTML = "💥";
       roachElement.style.filter = "none";
 
       // Мгновенное обновление локально
@@ -2433,7 +2462,7 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
         setTimeout(() => {
           isSquashed = false;
           const tier = getRoachTier(globalRoachKills);
-          document.getElementById("cockroach").innerHTML = tier.icon;
+          roachElement.innerHTML = tier.icon;
           roachElement.style.filter = tier.filter;
           roachX = Math.max(30, Math.round(window.innerWidth * 0.2));
           roachY = Math.max(100, window.innerHeight - 140);
@@ -2444,6 +2473,7 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
         }, 4000);
       }, 1200);
     }
+    
 
     // Инициализация
     renderBosses();
@@ -2451,176 +2481,11 @@ document.getElementById('globalRoachContainer').style.top = roachY + "px";
     renderQuests();
     renderThanks();
     loadGlobalRoachKills();
+    updateMyRoachUI();
     if (roachElement) {
       moveRoach();
     }
 
-
-     // --- ЛОГИКА ЛИЧНОГО ТАРАКАНА ---
-    function updateMyRoachUI() {
-        const tier = getRoachTier(myRoachKills);
-        const iconEl = document.getElementById("myRoachIcon");
-        const nickEl = document.getElementById("myRoachNick");
-        
-        if (iconEl) {
-            iconEl.innerHTML = tier.icon;
-            iconEl.style.filter = tier.filter;
-        }
-        if (nickEl) nickEl.innerText = myRoachNick;
-
-        // Обновляем шапку (слева)
-        const headerCount = document.getElementById("myRoachCountVal");
-        const headerTier = document.getElementById("myRoachTierVal");
-        const headerIcon = document.getElementById("myRoachWidgetIcon");
-        
-        if (headerCount) headerCount.innerText = myRoachKills;
-        if (headerTier) {
-            headerTier.innerText = `Ур. ${tier.level}: ${tier.name}`;
-            headerTier.style.color = tier.color;
-        }
-        if (headerIcon) {
-            headerIcon.innerHTML = tier.icon;
-            headerIcon.style.filter = tier.filter;
-        }
-    }
-    function moveMyRoach() {
-        if (myRoachIsSquashed) return;
-        const container = document.getElementById("myRoachContainer");
-        if (!container) return;
-
-        const maxWidth = window.innerWidth - 60;
-        myRoachX += myRoachSpeed * myRoachDirX;
-
-        if (myRoachX >= maxWidth) {
-            myRoachX = maxWidth;
-            myRoachDirX = -1;
-            container.style.transform = "scaleX(1)";
-        } else if (myRoachX <= 10) {
-            myRoachX = 10;
-            myRoachDirX = 1;
-            container.style.transform = "scaleX(-1)";
-        }
-
-        // Зигзаг по Y
-        myRoachY += 0.5 * myRoachDirY;
-        if (myRoachY >= window.innerHeight - 80) myRoachDirY = -1;
-        else if (myRoachY <= window.innerHeight - 250) myRoachDirY = 1;
-
-        container.style.left = myRoachX + "px";
-        container.style.top = myRoachY + "px";
-        requestAnimationFrame(moveMyRoach);
-    }
-
-       function squashMyRoach(e) {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        if (myRoachIsSquashed) return;
-        myRoachIsSquashed = true;
-
-        const iconEl = document.getElementById("myRoachIcon");
-        if (!iconEl) return;
-
-        // Меняем на взрыв
-        iconEl.innerText = "💥";
-        iconEl.style.filter = "none";
-
-        // Увеличиваем счетчик
-        myRoachKills++;
-        localStorage.setItem("my_roach_kills", myRoachKills);
-        updateMyRoachUI();
-        
-        // Отправляем на сервер
-        if (typeof sendToServer === "function") {
-            sendToServer(myRoachNick, myRoachKills);
-        }
-
-        // Возрождение через 2 секунды
-        setTimeout(() => {
-            myRoachIsSquashed = false;
-            const tier = getRoachTier(myRoachKills);
-            iconEl.innerHTML = tier.icon;
-            iconEl.style.filter = tier.filter;
-            
-            // Принудительно запускаем движение заново
-            moveMyRoach();
-        }, 2000);
-    }
-
-    function setMyRoachNick() {
-        let newNick = prompt("Введите ник для вашего таракана:", myRoachNick);
-        if (newNick && newNick.trim() !== "") {
-            myRoachNick = newNick.trim();
-            localStorage.setItem("my_roach_nick", myRoachNick);
-            updateMyRoachUI();
-        }
-    }
-
-    // Запуск личного таракана
-    updateMyRoachUI();
-    moveMyRoach();
-
-        // --- ТОП ТАРАКАНОВ ---
-    function toggleRoachTop() {
-        const panel = document.getElementById("roachTopPanel");
-        if (!panel) return;
-        
-        if (panel.style.display === "none") {
-            panel.style.display = "block";
-            loadRoachTopList();
-        } else {
-            panel.style.display = "none";
-        }
-    }
-
-    function loadRoachTopList() {
-        const content = document.getElementById("roachTopListContent");
-        if (!content) return;
-
-        // Для демо: показываем только твой результат и глобальный
-        // В будущем здесь можно будет подтягивать данные с сервера
-        content.innerHTML = `
-            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333;">
-                <span style="color: #2ecc71; font-weight: bold;">${myRoachNick}</span>
-                <span style="color: #f39c12;">${myRoachKills}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333;">
-                <span style="color: #e74c3c;">•NW• (Общий)</span>
-                <span style="color: #f39c12;">${globalRoachKills}</span>
-            </div>
-            <p style="font-size: 11px; color: #666; margin-top: 10px; text-align: center;">* Глобальный топ скоро появится</p>
-        `;
-    }
-    // --- ТОП ТАРАКАНОВ ---
-    function toggleRoachTop() {
-        const panel = document.getElementById("roachTopPanel");
-        if (!panel) return;
-        
-        if (panel.style.display === "none") {
-            panel.style.display = "block";
-            loadRoachTopList();
-        } else {
-            panel.style.display = "none";
-        }
-    }
-
-    function loadRoachTopList() {
-        const content = document.getElementById("roachTopListContent");
-        if (!content) return;
-
-        // Для демо: показываем только твой результат и глобальный
-        // В будущем здесь можно будет подтягивать данные с сервера
-        content.innerHTML = `
-            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333;">
-                <span style="color: #2ecc71; font-weight: bold;">${myRoachNick}</span>
-                <span style="color: #f39c12;">${myRoachKills}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333;">
-                <span style="color: #e74c3c;">•NW• (Общий)</span>
-                <span style="color: #f39c12;">${globalRoachKills}</span>
-            </div>
-            <p style="font-size: 11px; color: #666; margin-top: 10px; text-align: center;">* Глобальный топ скоро появится</p>
-        `;
-    }
-    
 </script>
 </body>
 </html>
