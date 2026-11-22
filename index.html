@@ -1421,11 +1421,29 @@
   <!-- Личный таракан -->
     <div id="myRoachContainer" onclick="squashMyRoach(event)" ontouchstart="squashMyRoach(event)" style="position: fixed; bottom: 50px; left: 50px; z-index: 9998; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
     <div id="myRoachNick" style="background: rgba(0,0,0,0.8); color: #2ecc71; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; border: 1px solid #2ecc71; margin-bottom: 2px; white-space: nowrap;">Мой ник</div>
-    <div id="myRoachIcon" style="font-size: 25px;">🐛</div>
+    <div id="myRoachIcon" style="font-size: 25px;">🪳</div>
     </div>
   
   <!-- Таракан -->
   <div id="cockroach" onclick="squashRoach(event)" ontouchstart="squashRoach(event)">🪳</div>
+
+  <!-- ЛИЧНЫЙ СЧЕТЧИК (ПАНЕЛЬ СПРАВА ВНИЗУ) -->
+<div id="myRoachWidget" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.9); padding: 10px; border-radius: 8px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; border: 1px solid #444; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+    <div style="display: flex; align-items: center; gap: 5px;">
+        <span style="font-size: 20px;">🐛</span>
+        <span style="color: #aaa; font-size: 12px;">Мои убийства:</span>
+        <span id="myRoachCounterVal" style="color: #2ecc71; font-weight: bold; font-size: 16px;">0</span>
+    </div>
+    <div id="myRoachCounterTier" style="font-size: 11px; color: #888; margin-top: 4px;">Ур. 1: Обычный</div>
+    <button onclick="setMyRoachNick()" style="margin-top: 5px; background: #333; border: 1px solid #555; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;">Сменить ник</button>
+    <button onclick="toggleTopList()" style="margin-top: 5px; background: #e74c3c; border: none; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;">🏆 Топ игроков</button>
+</div>
+
+<!-- ВЫДВИГАЮЩИЙСЯ СПИСОК ТОПА -->
+<div id="myRoachTopList" style="display: none; position: fixed; bottom: 120px; right: 10px; background: #222; border: 1px solid #444; border-radius: 8px; padding: 10px; min-width: 200px; z-index: 9999; text-align: left;">
+    <h4 style="margin: 0 0 5px 0; color: #f1c40f; font-size: 12px;">🏆 Топ убийц</h4>
+    <div id="topListContent" style="font-size: 12px; color: #ccc;">Загрузка...</div>
+</div>
 
   <script>
     // --- ДАННЫЕ БОССОВ ---
@@ -2456,24 +2474,7 @@ function setMyRoachNick() {
       }, 1200);
     }
     
-<!-- Личный счетчик -->
-<div id="myRoachWidget" style="position: fixed; bottom: 10px; right: 10px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 8px; z-index: 9998; display: flex; flex-direction: column; align-items: flex-end; border: 1px solid #333;">
-    <div style="display: flex; align-items: center; gap: 5px;">
-        <span style="font-size: 20px;">🐛</span>
-        <span style="color: #aaa; font-size: 12px;">Мои убийства:</span>
-        <span id="myRoachCounterVal" style="color: #2ecc71; font-weight: bold; font-size: 16px;">0</span>
-    </div>
-    <div id="myRoachCounterTier" style="font-size: 11px; color: #888; margin-top: 4px;">Ур. 1: Обычный</div>
-    <button onclick="setMyRoachNick()" style="margin-top: 5px; background: #333; border: 1px solid #555; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;">Сменить ник</button>
-    <button onclick="toggleTopList()" style="margin-top: 5px; background: #e74c3c; border: none; color: #fff; font-size: 10px; padding: 3px 6px; border-radius: 4px; cursor: pointer;">🏆 Топ игроков</button>
-</div>
 
-<!-- Выдвигающийся список топа -->
-<div id="myRoachTopList" style="display: none; position: fixed; bottom: 100px; right: 10px; background: #222; border: 1px solid #444; border-radius: 8px; padding: 10px; min-width: 200px; z-index: 9999; text-align: left;">
-    <h4 style="margin: 0 0 5px 0; color: #f1c40f; font-size: 12px;">🏆 Топ убийц</h4>
-    <div id="topListContent" style="font-size: 12px; color: #ccc;">Загрузка...</div>
-</div>
-    
     // Инициализация
     renderBosses();
     renderBusinesses();
