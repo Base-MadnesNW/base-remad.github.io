@@ -1025,7 +1025,7 @@
     }
 
 
-    /* Шапка и виджет счётчика тараканов */
+    /* Шапка и виджеты счётчиков */
     .header-container {
       position: relative;
       display: flex;
@@ -1042,20 +1042,19 @@
       order: 2;
     }
 
+    .roach-counters-bar {
+      display: contents;
+    }
+
     .roach-counter-widget {
-      position: absolute;
-      right: 20px;
-      top: 24px;
-      order: 3;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
       background: rgba(19, 23, 33, 0.92);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 8px 14px;
+      padding: 7px 13px;
       box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
       cursor: pointer;
       user-select: none;
@@ -1063,21 +1062,40 @@
       z-index: 90;
     }
 
-    .roach-counter-widget:hover {
-      border-color: rgba(255, 255, 255, 0.22);
+    .roach-widget-personal {
+      position: absolute;
+      left: 20px;
+      top: 24px;
+      order: 3;
+      border: 1px solid rgba(46, 204, 113, 0.35);
+    }
+    .roach-widget-personal:hover {
+      border-color: rgba(46, 204, 113, 0.7);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 8px 24px rgba(46, 204, 113, 0.25);
+    }
+
+    .roach-widget-global {
+      position: absolute;
+      right: 20px;
+      top: 24px;
+      order: 4;
+      border: 1px solid rgba(229, 57, 53, 0.35);
+    }
+    .roach-widget-global:hover {
+      border-color: rgba(229, 57, 53, 0.7);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(229, 57, 53, 0.25);
     }
 
     .roach-widget-icon {
-      font-size: 1.6rem;
+      font-size: 1.55rem;
       line-height: 1;
       display: inline-block;
       transition: transform 0.25s ease, filter 0.3s ease;
     }
-
     .roach-counter-widget:hover .roach-widget-icon {
-      transform: scale(1.18) rotate(12deg);
+      transform: scale(1.15) rotate(10deg);
     }
 
     .roach-widget-body {
@@ -1095,13 +1113,13 @@
     .roach-widget-num {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 800;
-      font-size: 1.15rem;
+      font-size: 1.12rem;
       color: var(--text-main);
       line-height: 1.2;
     }
 
     .roach-widget-label {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -1109,7 +1127,7 @@
     }
 
     .roach-widget-tier {
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 700;
       color: var(--gold);
       letter-spacing: 0.2px;
@@ -1117,42 +1135,86 @@
       transition: color 0.3s ease;
     }
 
+    .roach-widget-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 2px;
+    }
+
+    .widget-action-btn {
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .btn-nick {
+      background: #252a36;
+      border: 1px solid #3d4454;
+      color: #e2e8f0;
+    }
+    .btn-nick:hover {
+      background: #343c4d;
+      border-color: #2ed573;
+      color: #2ed573;
+    }
+    .btn-top {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      border: none;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(231, 76, 60, 0.4);
+    }
+    .btn-top:hover {
+      background: linear-gradient(135deg, #ff5252, #d63031);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.6);
+      transform: translateY(-1px);
+    }
+
     .pulse-anim {
       animation: counterPulse 0.4s ease;
     }
-
     @keyframes counterPulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.12); }
+      50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
 
-    /* Адаптив для планшетов и смартфонов: плашка размещается аккуратно по центру под описанием */
-    @media (max-width: 860px) {
-      .roach-counter-widget {
-        position: static;
-        order: 3;
-        margin: 12px auto 0;
-        padding: 6px 13px;
+    /* Адаптив для планшетов и смартфонов: обе плашки размещаются аккуратно по центру под описанием */
+    @media (max-width: 900px) {
+      .roach-counters-bar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 8px;
-        border-radius: 10px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        order: 3;
+        margin-top: 14px;
+        width: 100%;
+      }
+      .roach-widget-personal,
+      .roach-widget-global {
+        position: static !important;
+        margin: 0 !important;
+        padding: 6px 11px;
       }
       .roach-widget-icon {
-        font-size: 1.35rem;
+        font-size: 1.3rem;
       }
       .roach-widget-num {
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
       .roach-widget-label {
         font-size: 0.65rem;
       }
       .roach-widget-tier {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
       }
     }
 
-    /* Всплывающий текст при убийстве или поиске таракана */
+    /* Всплывающий текст при убийстве или поиске */
     .floating-kill-text {
       position: fixed;
       font-family: 'JetBrains Mono', monospace;
@@ -1165,42 +1227,77 @@
       white-space: nowrap;
       animation: floatUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
-
     @keyframes floatUp {
       0% { opacity: 1; transform: translate(0, 0) scale(0.85); }
       50% { opacity: 1; transform: translate(0, -30px) scale(1.1); }
       100% { opacity: 0; transform: translate(0, -55px) scale(1); }
     }
 
-    /* --- СТИЛИ ДЛЯ ТАРАКАНА --- */
-    #cockroach {
+    /* Ползающие насекомые (гусеницы) */
+    .crawling-insect-container {
       position: fixed;
-      top: calc(100vh - 130px);
-      left: 20px;
-      font-size: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       cursor: pointer;
-      z-index: 9999;
       user-select: none;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
-      padding: 16px;
-      margin: -16px;
-      transition: transform 0.1s linear, opacity 0.3s ease, filter 0.3s ease; 
-      transform: scaleX(-1); 
+      padding: 14px;
+      margin: -14px;
+      transition: left 0.1s linear, top 0.1s linear;
+      z-index: 9998;
     }
-    @keyframes skitter {
-      0%, 100% { transform: scaleX(-1) translateY(0); }
-      50% { transform: scaleX(-1) translateY(-3px); }
+    #globalRoachContainer {
+      z-index: 9999;
     }
+
+    .roach-nick-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 5px;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      margin-bottom: 2px;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+    .global-nick-badge {
+      color: #ff6b6b;
+      background: rgba(15, 18, 26, 0.92);
+      border: 1px solid #ff4757;
+      box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+    }
+    .personal-nick-badge {
+      color: #2ed573;
+      background: rgba(15, 18, 26, 0.92);
+      border: 1px solid #2ed573;
+      box-shadow: 0 0 10px rgba(46, 213, 115, 0.45);
+    }
+
+    .insect-icon {
+      font-size: 32px;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.1s linear, filter 0.3s ease;
+      filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+    }
+
     .running {
       animation: skitter 0.2s infinite;
+    }
+    @keyframes skitter {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
     }
     .squashed {
       opacity: 0 !important;
       pointer-events: none;
     }
 
-    /* Подсветка / маяк при клике на счётчик ("Где таракан?") */
+    /* Подсветка / маяк при клике на счётчик */
     @keyframes roachSummonBeacon {
       0% {
         box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.95), 0 0 20px rgba(255, 215, 0, 0.9);
@@ -1221,22 +1318,230 @@
       background: radial-gradient(circle, rgba(255, 71, 87, 0.4) 0%, rgba(255, 215, 0, 0.2) 65%, transparent 100%) !important;
       z-index: 100000 !important;
     }
+
+    /* Модальное окно рейтинга (Топ охотников) */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 100000;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-box {
+      background: #151923;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 520px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      animation: modalFadeIn 0.25s ease;
+    }
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .modal-close-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .my-status-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(46, 204, 113, 0.08);
+      border: 1px solid rgba(46, 204, 113, 0.28);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+    .my-status-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .my-status-avatar {
+      font-size: 2rem;
+    }
+    .my-status-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #2ed573;
+    }
+    .my-status-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .my-status-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .my-status-kills {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+    .btn-change-nick {
+      background: #252a36;
+      border: 1px solid #3d4454;
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-change-nick:hover {
+      border-color: #2ed573;
+      color: #2ed573;
+    }
+
+    .leaderboard-table-wrap {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: left;
+    }
+    .leaderboard-table th {
+      background: rgba(10, 13, 20, 0.95);
+      padding: 9px 12px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .leaderboard-table td {
+      padding: 8px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .leaderboard-table tr.my-row {
+      background: rgba(46, 204, 113, 0.12);
+      font-weight: 700;
+    }
+    .leaderboard-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .rank-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      width: 45px;
+      text-align: center;
+    }
+    .kills-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      color: var(--gold);
+      text-align: right;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .modal-hint {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .btn-primary-sm {
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-primary-sm:hover {
+      background: var(--accent-hover);
+    }
+
   </style>
 <script src="quests.js"></script>
 </head>
 <body>
 
   <header class="container header-container">
-    <div class="roach-counter-widget" id="roachCounterWidget" onclick="focusRoach()" title="Общий счётчик убийств таракана всеми игроками. Кликни, чтобы найти!">
-      <span class="roach-widget-icon" id="roachWidgetIcon">🪳</span>
-      <div class="roach-widget-body">
-        <div class="roach-widget-top">
-          <span class="roach-widget-num" id="roachCountVal">0</span>
-          <span class="roach-widget-label">убито</span>
+    <div class="roach-counters-bar">
+      <!-- 1. Личный счётчик (слева на ПК, по центру на смартфонах) -->
+      <div class="roach-counter-widget roach-widget-personal" id="myRoachCounterWidget" onclick="focusMyRoach()" title="Ваша личная гусеница. Кликни, чтобы найти!">
+        <span class="roach-widget-icon" id="myRoachWidgetIcon">🐛</span>
+        <div class="roach-widget-body">
+          <div class="roach-widget-top">
+            <span class="roach-widget-num" id="myRoachCountVal">0</span>
+            <span class="roach-widget-label">убито</span>
+          </div>
+          <div class="roach-widget-tier" id="myRoachTierVal">Ур. 1: Обычная</div>
         </div>
-        <div class="roach-widget-tier" id="roachTierVal">Ур. 1: Обычный</div>
+        <div class="roach-widget-btns" onclick="event.stopPropagation()">
+          <button class="widget-action-btn btn-nick" onclick="setMyRoachNick()" title="Сменить игровой ник">Ник</button>
+          <button class="widget-action-btn btn-top" onclick="toggleRoachTop()" title="Таблица лидеров">🏆 Топ</button>
+        </div>
+      </div>
+
+      <!-- 2. Общий счётчик NW (справа на ПК, по центру на смартфонах) -->
+      <div class="roach-counter-widget roach-widget-global" id="roachCounterWidget" onclick="focusRoach()" title="Общий счётчик клана •NW• всеми игроками. Кликни, чтобы найти!">
+        <span class="roach-widget-icon" id="roachWidgetIcon">🐛</span>
+        <div class="roach-widget-body">
+          <div class="roach-widget-top">
+            <span class="roach-widget-num" id="roachCountVal">0</span>
+            <span class="roach-widget-label">•NW•</span>
+          </div>
+          <div class="roach-widget-tier" id="roachTierVal">Ур. 1: Обычная</div>
+        </div>
       </div>
     </div>
+
     <h1>База знаний Безумия</h1>
     <div class="subtitle"><span class="online-dot"></span>Справочник буйных, бизнесов, заначек и квестов</div>
   </header>
@@ -1415,8 +1720,62 @@
     <div class="author">®Killproks, помощник проекта - •NW•Osangar</div>
   </footer>
 
-  <!-- Таракан -->
-  <div id="cockroach" onclick="squashRoach(event)" ontouchstart="squashRoach(event)">🪳</div>
+  <!-- 1. ОБЩИЙ ТАРАКАН КЛАНА •NW• -->
+  <div id="globalRoachContainer" class="crawling-insect-container" onclick="squashRoach(event)" ontouchstart="squashRoach(event)" title="Гусеница •NW• (Кликни, чтобы раздавить!)">
+    <div class="roach-nick-badge global-nick-badge">•NW•</div>
+    <div id="cockroach" class="insect-icon">🐛</div>
+  </div>
+
+  <!-- 2. ЛИЧНЫЙ ТАРАКАН ИГРОКА -->
+  <div id="myRoachContainer" class="crawling-insect-container" onclick="squashMyRoach(event)" ontouchstart="squashMyRoach(event)" title="Ваша личная гусеница (Кликни, чтобы раздавить!)">
+    <div id="myRoachNick" class="roach-nick-badge personal-nick-badge">Игрок</div>
+    <div id="myRoachIcon" class="insect-icon">🐛</div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО ТОПА ОХОТНИКОВ -->
+  <div id="roachTopModal" class="modal-backdrop" onclick="if(event.target===this) toggleRoachTop()">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">🏆 Топ охотников за гусеницами</div>
+        <button class="modal-close-btn" onclick="toggleRoachTop()">✕</button>
+      </div>
+
+      <div class="my-status-card">
+        <div class="my-status-left">
+          <span class="my-status-avatar" id="topMyAvatar">🐛</span>
+          <div>
+            <div class="my-status-name" id="topMyNick">Игрок</div>
+            <div class="my-status-sub" id="topMyTier">Ур. 1: Обычная</div>
+          </div>
+        </div>
+        <div class="my-status-right">
+          <div class="my-status-kills" id="topMyKills">0</div>
+          <button class="btn-change-nick" onclick="setMyRoachNick()">Сменить ник</button>
+        </div>
+      </div>
+
+      <div class="leaderboard-table-wrap">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Место</th>
+              <th>Охотник</th>
+              <th>Уровень</th>
+              <th>Убито</th>
+            </tr>
+          </thead>
+          <tbody id="roachTopListBody">
+            <!-- Список генерируется через JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <span class="modal-hint">💡 Убивай свою гусеницу, чтобы подниматься в рейтинге!</span>
+        <button class="btn-primary-sm" onclick="toggleRoachTop()">Закрыть</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     // --- ДАННЫЕ БОССОВ ---
@@ -2173,30 +2532,47 @@
       resEl.innerText = resultText;
     }
 
-    // --- СИСТЕМА УРОВНЕЙ И СЧЁТЧИКА ТАРАКАНА (10 УРОВНЕЙ) ---
+    // --- СИСТЕМА УРОВНЕЙ И СЧЁТЧИКА ГУСЕНИЦЫ (100% совместимые Unicode-символы) ---
     const roachTiers = [
-      { level: 1, name: "Обычный", min: 0, icon: "🪳", color: "#8b95a5", filter: "none" },
-      { level: 2, name: "Бронзовый", min: 50, icon: "🪳", color: "#cd7f32", filter: "sepia(0.8) hue-rotate(-20deg) saturate(2.5) drop-shadow(0 0 8px #cd7f32)" },
-      { level: 3, name: "Серебряный", min: 100, icon: "🐛", color: "#e2e8f0", filter: "grayscale(1) brightness(1.7) contrast(1.2) drop-shadow(0 0 10px #e2e8f0)" },
-      { level: 4, name: "Золотой", min: 150, icon: "🪳", color: "#feca57", filter: "sepia(1) saturate(5) hue-rotate(15deg) brightness(1.2) drop-shadow(0 0 12px #feca57)" },
-      { level: 5, name: "Платиновый", min: 300, icon: "🪳", color: "#54a0ff", filter: "brightness(1.4) hue-rotate(170deg) saturate(3) drop-shadow(0 0 14px #54a0ff)" },
-      { level: 6, name: "Изумрудный мутант", min: 500, icon: "🪲", color: "#2ed573", filter: "hue-rotate(90deg) saturate(4) drop-shadow(0 0 15px #2ed573)" },
-      { level: 7, name: "Рубиновый берсерк", min: 1000, icon: "🦂", color: "#ff4757", filter: "hue-rotate(330deg) saturate(5) drop-shadow(0 0 16px #ff4757)" },
-      { level: 8, name: "Алмазный титан", min: 3000, icon: "💎", color: "#70a1ff", filter: "drop-shadow(0 0 18px #70a1ff) brightness(1.3)" },
-      { level: 9, name: "Теневой владыка", min: 5000, icon: "🦹", color: "#c56cf0", filter: "hue-rotate(260deg) saturate(4) drop-shadow(0 0 20px #c56cf0)" },
-      { level: 10, name: "Космический Пожиратель", min: 10000, icon: "👾", color: "#ff9ff3", filter: "drop-shadow(0 0 22px #ff9ff3) drop-shadow(0 0 10px #00d2d3)" }
+      { level: 1, name: "Обычная гусеница", min: 0, icon: "🐛", color: "#8b95a5", filter: "none" },
+      { level: 2, name: "Бронзовая гусеница", min: 30, icon: "🐛", color: "#cd7f32", filter: "sepia(0.8) hue-rotate(-20deg) saturate(2.5) drop-shadow(0 0 8px #cd7f32)" },
+      { level: 3, name: "Серебряная гусеница", min: 70, icon: "🐛", color: "#e2e8f0", filter: "grayscale(1) brightness(1.7) contrast(1.2) drop-shadow(0 0 10px #e2e8f0)" },
+      { level: 4, name: "Золотая гусеница", min: 150, icon: "🐛", color: "#feca57", filter: "sepia(1) saturate(5) hue-rotate(15deg) brightness(1.2) drop-shadow(0 0 12px #feca57)" },
+      { level: 5, name: "Платиновая гусеница", min: 300, icon: "🐛", color: "#54a0ff", filter: "brightness(1.4) hue-rotate(170deg) saturate(3) drop-shadow(0 0 14px #54a0ff)" },
+      { level: 6, name: "Изумрудный муравей", min: 500, icon: "🐜", color: "#2ed573", filter: "hue-rotate(90deg) saturate(4) drop-shadow(0 0 15px #2ed573)" },
+      { level: 7, name: "Рубиновый скорпион", min: 1000, icon: "🦂", color: "#ff4757", filter: "hue-rotate(330deg) saturate(5) drop-shadow(0 0 16px #ff4757)" },
+      { level: 8, name: "Алмазный паук", min: 2000, icon: "🕷️", color: "#70a1ff", filter: "drop-shadow(0 0 18px #70a1ff) brightness(1.3)" },
+      { level: 9, name: "Королевский владыка", min: 3500, icon: "👑", color: "#c56cf0", filter: "hue-rotate(260deg) saturate(4) drop-shadow(0 0 20px #c56cf0)" },
+      { level: 10, name: "Космический Пожиратель", min: 5000, icon: "👾", color: "#ff9ff3", filter: "drop-shadow(0 0 22px #ff9ff3) drop-shadow(0 0 10px #00d2d3)" }
     ];
 
+    // --- ОБЩАЯ ГУСЕНИЦА •NW• ---
     let globalRoachKills = 0;
+    let globalRoachContainer = document.getElementById("globalRoachContainer");
     let roachElement = document.getElementById("cockroach");
     let isSquashed = false;
-    let roachX = Math.max(30, Math.round(window.innerWidth * 0.3));
+    let roachX = Math.max(30, Math.round(window.innerWidth * 0.35));
     let roachY = Math.max(120, window.innerHeight - 150);
     let roachDirectionX = 1;
-    let roachSpeedX = 1.5;
+    let roachSpeedX = 1.4;
     let roachSpeedY = 0.6;
     let roachDirY = 1;
     let summonTimeout = null;
+
+    // --- ЛИЧНАЯ ГУСЕНИЦА ИГРОКА ---
+    let myRoachKills = parseInt(localStorage.getItem("my_roach_kills")) || 0;
+    let myRoachNick = localStorage.getItem("my_roach_nick") || "Игрок";
+    let myRoachContainer = document.getElementById("myRoachContainer");
+    let myRoachIconEl = document.getElementById("myRoachIcon");
+    let myRoachNickEl = document.getElementById("myRoachNick");
+    let myRoachX = Math.max(30, Math.round(window.innerWidth * 0.65));
+    let myRoachY = Math.max(100, window.innerHeight - 180);
+    let myRoachDirX = -1;
+    let myRoachDirY = -1;
+    let myRoachSpeedX = 1.2;
+    let myRoachSpeedY = 0.5;
+    let myRoachIsSquashed = false;
+    let mySummonTimeout = null;
 
     function getRoachTier(kills) {
       let current = roachTiers[0];
@@ -2206,6 +2582,17 @@
       return current;
     }
 
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Обновление интерфейса общего счётчика •NW•
     function updateRoachUI(kills, animate = false) {
       const tier = getRoachTier(kills);
 
@@ -2225,24 +2612,54 @@
       }
       if (widgetEl && animate) {
         widgetEl.classList.remove('pulse-anim');
-        void widgetEl.offsetWidth; // trigger reflow
+        void widgetEl.offsetWidth;
         widgetEl.classList.add('pulse-anim');
       }
 
-      // Обновляем бегающего таракана, если он жив
       if (roachElement && !isSquashed) {
         roachElement.innerHTML = tier.icon;
         roachElement.style.filter = tier.filter;
       }
     }
 
+    // Обновление интерфейса личного счётчика
+    function updateMyRoachUI(animate = false) {
+      const tier = getRoachTier(myRoachKills);
+
+      const valEl = document.getElementById("myRoachCountVal");
+      const tierEl = document.getElementById("myRoachTierVal");
+      const iconEl = document.getElementById("myRoachWidgetIcon");
+      const widgetEl = document.getElementById("myRoachCounterWidget");
+
+      if (valEl) valEl.innerText = Number(myRoachKills).toLocaleString('ru-RU');
+      if (tierEl) {
+        tierEl.innerText = `Ур. ${tier.level}: ${tier.name}`;
+        tierEl.style.color = tier.color;
+      }
+      if (iconEl) {
+        iconEl.innerHTML = tier.icon;
+        iconEl.style.filter = tier.filter;
+      }
+      if (widgetEl && animate) {
+        widgetEl.classList.remove('pulse-anim');
+        void widgetEl.offsetWidth;
+        widgetEl.classList.add('pulse-anim');
+      }
+
+      if (myRoachIconEl && !myRoachIsSquashed) {
+        myRoachIconEl.innerHTML = tier.icon;
+        myRoachIconEl.style.filter = tier.filter;
+      }
+      if (myRoachNickEl) {
+        myRoachNickEl.innerText = myRoachNick;
+      }
+    }
+
     function loadGlobalRoachKills() {
-      // 1. Быстрый показ из локального хранилища
       const cached = parseInt(localStorage.getItem("roach_kills_cache")) || 0;
       globalRoachKills = cached;
       updateRoachUI(globalRoachKills, false);
 
-      // 2. Запрос общего счётчика из бесплатного открытого API
       fetch("https://countapi.mileshilliard.com/api/v1/get/madness_nw_roach_kills")
         .then(r => r.json())
         .then(data => {
@@ -2252,16 +2669,13 @@
             updateRoachUI(globalRoachKills, false);
           }
         })
-        .catch(() => {
-          // Если сеть недоступна, остаётся локальный кэш
-        });
+        .catch(() => {});
     }
 
     function showFloatingKillText(text, x, y) {
       const el = document.createElement("div");
       el.className = "floating-kill-text";
       el.innerText = text;
-      // Ограничиваем координаты, чтобы текст не вылезал за границы экрана
       const clampedX = Math.max(15, Math.min(window.innerWidth - 240, x - 20));
       const clampedY = Math.max(50, Math.min(window.innerHeight - 60, y - 25));
       el.style.left = `${clampedX}px`;
@@ -2270,47 +2684,69 @@
       setTimeout(() => el.remove(), 1200);
     }
 
+    // Призыв гусеницы •NW•
     function focusRoach() {
-      if (!roachElement) return;
+      if (!globalRoachContainer || !roachElement) return;
 
       if (isSquashed) {
-        showFloatingKillText("Таракан раздавлен! Возродится с секунды на секунду... ⏳", window.innerWidth / 2 - 140, window.innerHeight / 2);
+        showFloatingKillText("Гусеница •NW• раздавлена! Возрождается... ⏳", window.innerWidth / 2 - 140, window.innerHeight / 2);
         return;
       }
 
-      // Призываем таракана прямо в видимый центр экрана игрока
-      roachX = Math.round(window.innerWidth / 2 - 16);
-      roachY = Math.round(window.innerHeight / 2 - 16);
-      roachElement.style.left = roachX + "px";
-      roachElement.style.top = roachY + "px";
+      roachX = Math.round(window.innerWidth / 2 - 20);
+      roachY = Math.round(window.innerHeight / 2 - 40);
+      globalRoachContainer.style.left = roachX + "px";
+      globalRoachContainer.style.top = roachY + "px";
 
-      // Включаем яркий маяк-пульсацию вокруг таракана
       roachElement.classList.add("roach-summon-beacon");
       if (summonTimeout) clearTimeout(summonTimeout);
       summonTimeout = setTimeout(() => {
         if (roachElement) roachElement.classList.remove("roach-summon-beacon");
       }, 3500);
 
-      showFloatingKillText("Таракан здесь! Лови! 🪳", roachX, roachY - 25);
+      showFloatingKillText("Гусеница •NW• здесь! 🐛", roachX, roachY - 25);
     }
 
-    function moveRoach() {
-      if (isSquashed || !roachElement) return;
+    // Призыв личной гусеницы игрока
+    function focusMyRoach() {
+      if (!myRoachContainer || !myRoachIconEl) return;
 
-      const maxWidth = window.innerWidth - 55;
+      if (myRoachIsSquashed) {
+        showFloatingKillText("Ваша гусеница раздавлена! Скоро оживёт... ⏳", window.innerWidth / 2 - 140, window.innerHeight / 2);
+        return;
+      }
+
+      myRoachX = Math.round(window.innerWidth / 2 - 20);
+      myRoachY = Math.round(window.innerHeight / 2 + 40);
+      myRoachContainer.style.left = myRoachX + "px";
+      myRoachContainer.style.top = myRoachY + "px";
+
+      myRoachIconEl.classList.add("roach-summon-beacon");
+      if (mySummonTimeout) clearTimeout(mySummonTimeout);
+      mySummonTimeout = setTimeout(() => {
+        if (myRoachIconEl) myRoachIconEl.classList.remove("roach-summon-beacon");
+      }, 3500);
+
+      showFloatingKillText(`Гусеница ${myRoachNick} здесь! 🐛`, myRoachX, myRoachY - 25);
+    }
+
+    // Движение общей гусеницы •NW•
+    function moveRoach() {
+      if (isSquashed || !globalRoachContainer || !roachElement) return;
+
+      const maxWidth = window.innerWidth - 65;
       roachX += roachSpeedX * roachDirectionX;
 
       if (roachX >= maxWidth) {
         roachX = maxWidth;
         roachDirectionX = -1;
-        roachElement.style.transform = "scaleX(1)"; 
+        roachElement.style.transform = "scaleX(1)";
       } else if (roachX <= 10) {
         roachX = 10;
         roachDirectionX = 1;
-        roachElement.style.transform = "scaleX(-1)"; 
+        roachElement.style.transform = "scaleX(-1)";
       }
 
-      // Безопасный отступ от нижних панелей Safari / Chrome / VK на мобильных и планшетах (не менее 85px)
       const bottomSafeMargin = 85;
       const minY = Math.max(80, window.innerHeight - 200);
       const maxY = Math.max(minY + 30, window.innerHeight - bottomSafeMargin);
@@ -2325,8 +2761,8 @@
         roachDirY = 1;
       }
 
-      roachElement.style.left = roachX + "px";
-      roachElement.style.top = roachY + "px";
+      globalRoachContainer.style.left = roachX + "px";
+      globalRoachContainer.style.top = roachY + "px";
 
       if (!roachElement.classList.contains('running')) {
         roachElement.classList.add('running');
@@ -2335,6 +2771,7 @@
       requestAnimationFrame(moveRoach);
     }
 
+    // Раздавливание общей гусеницы •NW•
     function squashRoach(e) {
       if (e) {
         if (e.cancelable) e.preventDefault();
@@ -2346,20 +2783,16 @@
       if (summonTimeout) clearTimeout(summonTimeout);
       roachElement.classList.remove("roach-summon-beacon");
 
-      // Анимация раздавливания
       roachElement.classList.remove('running');
       roachElement.innerHTML = "💥";
       roachElement.style.filter = "none";
 
-      // Мгновенное обновление локально
       globalRoachKills++;
       localStorage.setItem("roach_kills_cache", globalRoachKills);
       updateRoachUI(globalRoachKills, true);
 
-      // Всплывающий текст
-      showFloatingKillText("+1 💥", roachX, roachY);
+      showFloatingKillText("+1 •NW• 💥", roachX, roachY);
 
-      // Фоновая отправка в общий глобальный счётчик
       fetch("https://countapi.mileshilliard.com/api/v1/hit/madness_nw_roach_kills")
         .then(r => r.json())
         .then(data => {
@@ -2371,9 +2804,8 @@
         })
         .catch(() => {});
 
-      // Возрождение таракана
       setTimeout(() => {
-        roachElement.classList.add('squashed');
+        globalRoachContainer.classList.add('squashed');
         setTimeout(() => {
           isSquashed = false;
           const tier = getRoachTier(globalRoachKills);
@@ -2383,10 +2815,199 @@
           roachY = Math.max(100, window.innerHeight - 140);
           roachDirectionX = 1;
           roachDirY = 1;
-          roachElement.classList.remove('squashed');
+          globalRoachContainer.classList.remove('squashed');
           moveRoach();
-        }, 4000);
-      }, 1200);
+        }, 3000);
+      }, 1000);
+    }
+
+    // Движение личной гусеницы игрока
+    function moveMyRoach() {
+      if (myRoachIsSquashed || !myRoachContainer || !myRoachIconEl) return;
+
+      const maxWidth = window.innerWidth - 65;
+      myRoachX += myRoachSpeedX * myRoachDirX;
+
+      if (myRoachX >= maxWidth) {
+        myRoachX = maxWidth;
+        myRoachDirX = -1;
+        myRoachIconEl.style.transform = "scaleX(1)";
+      } else if (myRoachX <= 10) {
+        myRoachX = 10;
+        myRoachDirX = 1;
+        myRoachIconEl.style.transform = "scaleX(-1)";
+      }
+
+      const bottomSafeMargin = 85;
+      const minY = Math.max(85, window.innerHeight - 220);
+      const maxY = Math.max(minY + 30, window.innerHeight - bottomSafeMargin);
+
+      myRoachY += myRoachSpeedY * myRoachDirY;
+
+      if (myRoachY >= maxY) {
+        myRoachY = maxY;
+        myRoachDirY = -1;
+      } else if (myRoachY <= minY) {
+        myRoachY = minY;
+        myRoachDirY = 1;
+      }
+
+      myRoachContainer.style.left = myRoachX + "px";
+      myRoachContainer.style.top = myRoachY + "px";
+
+      if (!myRoachIconEl.classList.contains('running')) {
+        myRoachIconEl.classList.add('running');
+      }
+
+      requestAnimationFrame(moveMyRoach);
+    }
+
+    // Раздавливание личной гусеницы игрока
+    function squashMyRoach(e) {
+      if (e) {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+      }
+      if (myRoachIsSquashed || !myRoachIconEl) return;
+      myRoachIsSquashed = true;
+
+      if (mySummonTimeout) clearTimeout(mySummonTimeout);
+      myRoachIconEl.classList.remove("roach-summon-beacon");
+
+      myRoachIconEl.classList.remove('running');
+      myRoachIconEl.innerHTML = "💥";
+      myRoachIconEl.style.filter = "none";
+
+      myRoachKills++;
+      localStorage.setItem("my_roach_kills", myRoachKills);
+      updateMyRoachUI(true);
+
+      showFloatingKillText(`+1 ${myRoachNick} 💥`, myRoachX, myRoachY);
+
+      // Обновляем рейтинг, если открыт
+      const modal = document.getElementById("roachTopModal");
+      if (modal && modal.classList.contains("open")) {
+        renderRoachTop();
+      }
+
+      setTimeout(() => {
+        myRoachContainer.classList.add('squashed');
+        setTimeout(() => {
+          myRoachIsSquashed = false;
+          const tier = getRoachTier(myRoachKills);
+          myRoachIconEl.innerHTML = tier.icon;
+          myRoachIconEl.style.filter = tier.filter;
+          myRoachX = Math.max(30, Math.round(window.innerWidth * 0.7));
+          myRoachY = Math.max(100, window.innerHeight - 170);
+          myRoachDirX = -1;
+          myRoachDirY = -1;
+          myRoachContainer.classList.remove('squashed');
+          moveMyRoach();
+        }, 2500);
+      }, 1000);
+    }
+
+    // Смена ника личной гусеницы
+    function setMyRoachNick() {
+      const current = myRoachNick || "Игрок";
+      let newNick = prompt("Введите никнейм для вашей гусеницы (до 18 символов):", current);
+      if (newNick !== null) {
+        newNick = newNick.trim().substring(0, 18);
+        if (newNick && newNick !== myRoachNick) {
+          myRoachNick = newNick;
+          localStorage.setItem("my_roach_nick", myRoachNick);
+          updateMyRoachUI();
+          renderRoachTop();
+        }
+      }
+    }
+
+    // --- РЕЙТИНГ И ТОП ОХОТНИКОВ ---
+    const baseClanRoster = [
+      { nick: "•NW•Osangar", kills: 340 },
+      { nick: "Killproks", kills: 285 },
+      { nick: "NW_Легенда", kills: 190 },
+      { nick: "NW_Сталкер", kills: 125 },
+      { nick: "NW_Фантом", kills: 80 },
+      { nick: "Новичок", kills: 15 }
+    ];
+
+    function getCombinedLeaderboard() {
+      let map = new Map();
+      baseClanRoster.forEach(p => map.set(p.nick, { nick: p.nick, kills: p.kills }));
+
+      // Добавляем текущего игрока с его реальным счётом
+      map.set(myRoachNick, { nick: myRoachNick, kills: myRoachKills, isMe: true });
+
+      let list = Array.from(map.values());
+      list.sort((a, b) => b.kills - a.kills);
+      return list;
+    }
+
+    function renderRoachTop() {
+      const list = getCombinedLeaderboard();
+      const tbody = document.getElementById("roachTopListBody");
+      if (!tbody) return;
+
+      const myTier = getRoachTier(myRoachKills);
+      const topMyNick = document.getElementById("topMyNick");
+      const topMyTier = document.getElementById("topMyTier");
+      const topMyKills = document.getElementById("topMyKills");
+      const topMyAvatar = document.getElementById("topMyAvatar");
+
+      if (topMyNick) topMyNick.innerText = myRoachNick;
+      if (topMyTier) {
+        topMyTier.innerText = `Ур. ${myTier.level}: ${myTier.name}`;
+        topMyTier.style.color = myTier.color;
+      }
+      if (topMyKills) topMyKills.innerText = Number(myRoachKills).toLocaleString('ru-RU');
+      if (topMyAvatar) {
+        topMyAvatar.innerHTML = myTier.icon;
+        topMyAvatar.style.filter = myTier.filter;
+      }
+
+      let html = "";
+      list.forEach((item, index) => {
+        const rank = index + 1;
+        let rankBadge = rank;
+        if (rank === 1) rankBadge = "🥇";
+        else if (rank === 2) rankBadge = "🥈";
+        else if (rank === 3) rankBadge = "🥉";
+
+        const isMe = (item.nick === myRoachNick);
+        const itemTier = getRoachTier(item.kills);
+
+        html += `
+          <tr class="${isMe ? 'my-row' : ''}">
+            <td class="rank-cell">${rankBadge}</td>
+            <td>
+              <span style="color: ${isMe ? '#2ed573' : (item.nick.includes('NW') ? '#ff6b6b' : '#e2e8f0')}">
+                ${escapeHtml(item.nick)}
+              </span>
+              ${isMe ? ' <span style="font-size: 10px; color: #2ed573; font-weight: bold;">(Вы)</span>' : ''}
+            </td>
+            <td>
+              <span style="color: ${itemTier.color}; font-size: 0.8rem; font-weight: 600;">
+                ${itemTier.icon} Ур. ${itemTier.level}
+              </span>
+            </td>
+            <td class="kills-cell">${Number(item.kills).toLocaleString('ru-RU')}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function toggleRoachTop() {
+      const modal = document.getElementById("roachTopModal");
+      if (!modal) return;
+      if (modal.classList.contains("open")) {
+        modal.classList.remove("open");
+      } else {
+        renderRoachTop();
+        modal.classList.add("open");
+      }
     }
 
     // Инициализация
@@ -2395,8 +3016,13 @@
     renderQuests();
     renderThanks();
     loadGlobalRoachKills();
-    if (roachElement) {
+    updateMyRoachUI();
+
+    if (globalRoachContainer) {
       moveRoach();
+    }
+    if (myRoachContainer) {
+      moveMyRoach();
     }
 
 </script>
