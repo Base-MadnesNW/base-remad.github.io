@@ -67,7 +67,22 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-
+   
+    /* ники px */ 
+.roach-nick {
+    font-size: 11px;
+    font-weight: bold;
+    color: #fff; /* Белый цвет для читаемости */
+    text-shadow: 1px 1px 2px #000, 0 0 5px #000; /* Тень, чтобы читалось на фоне */
+    white-space: nowrap;
+    margin-bottom: -5px; /* Прижимаем ближе к таракану */
+    pointer-events: none; /* Чтобы ник не мешал кликать */
+    background: transparent;
+    border: none;
+    padding: 0;
+    transform: scaleX(-1); /* Переворачиваем ник, чтобы он не был зеркальным, если контейнер перевернут */
+}
+    
     /* Ограничиваем общую ширину страницы до комфортных 1220px */
     .container {
       width: 100%;
@@ -1437,8 +1452,11 @@
     <div class="author">®Killproks, помощник проекта - •NW•Osangar</div>
   </footer>
 
-  <!-- Таракан -->
-  <div id="cockroach" onclick="squashRoach(event)" ontouchstart="squashRoach(event)">🪳</div>
+  <!-- ОБЩИЙ ТАРАКАН -->
+<div id="globalRoachContainer" style="position: fixed; z-index: 9999; display: flex; flex-direction: column; align-items: center; transition: left 0.1s linear, top 0.1s linear; transform: scaleX(-1);">
+    <div class="roach-nick global-nick">•NW•</div>
+    <div id="cockroach" onclick="squashRoach(event)" ontouchstart="squashRoach(event)" style="cursor: pointer; font-size: 32px;">🪳</div>
+</div>
 
   <!-- ЛИЧНЫЙ ТАРАКАН -->
 <div id="myRoachContainer" onclick="squashMyRoach(event)" ontouchstart="squashMyRoach(event)" style="position: fixed; bottom: 50px; left: 50px; z-index: 9998; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: left 0.1s linear, top 0.1s linear;">
@@ -2319,8 +2337,8 @@
       // Призываем таракана прямо в видимый центр экрана игрока
       roachX = Math.round(window.innerWidth / 2 - 16);
       roachY = Math.round(window.innerHeight / 2 - 16);
-      roachElement.style.left = roachX + "px";
-      roachElement.style.top = roachY + "px";
+document.getElementById('globalRoachContainer').style.left = roachX + "px";
+document.getElementById('globalRoachContainer').style.top = roachY + "px";
 
       // Включаем яркий маяк-пульсацию вокруг таракана
       roachElement.classList.add("roach-summon-beacon");
@@ -2363,8 +2381,8 @@
         roachDirY = 1;
       }
 
-      roachElement.style.left = roachX + "px";
-      roachElement.style.top = roachY + "px";
+document.getElementById('globalRoachContainer').style.left = roachX + "px";
+document.getElementById('globalRoachContainer').style.top = roachY + "px";
 
       if (!roachElement.classList.contains('running')) {
         roachElement.classList.add('running');
@@ -2493,28 +2511,31 @@
         requestAnimationFrame(moveMyRoach);
     }
 
-    function squashMyRoach(e) {
-        if (e) { e.preventDefault(); e.stopPropagation(); }
-        if (myRoachIsSquashed) return;
-        myRoachIsSquashed = true;
+   function squashMyRoach(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    if (myRoachIsSquashed) return;
+    myRoachIsSquashed = true;
 
-        const iconEl = document.getElementById("myRoachIcon");
-        if (!iconEl) return;
+    const iconEl = document.getElementById("myRoachIcon");
+    if (!iconEl) return;
 
-        iconEl.innerText = "💥";
-        iconEl.style.filter = "none";
+    iconEl.innerText = "💥";
+    iconEl.style.filter = "none";
 
-        myRoachKills++;
-        localStorage.setItem("my_roach_kills", myRoachKills);
-        updateMyRoachUI();
+    myRoachKills++;
+    localStorage.setItem("my_roach_kills", myRoachKills);
+    updateMyRoachUI();
 
-        setTimeout(() => {
-            myRoachIsSquashed = false;
-            const tier = getRoachTier(myRoachKills);
-            iconEl.innerHTML = tier.icon;
-            iconEl.style.filter = tier.filter;
-        }, 2000);
-    }
+    setTimeout(() => {
+        myRoachIsSquashed = false;
+        const tier = getRoachTier(myRoachKills);
+        iconEl.innerHTML = tier.icon;
+        iconEl.style.filter = tier.filter;
+        
+        // ВОТ ЭТА СТРОКА ЗАПУСКАЕТ ЕГО ЗАНОВО
+        moveMyRoach(); 
+    }, 2000);
+}
 
     function setMyRoachNick() {
         let newNick = prompt("Введите ник для вашего таракана:", myRoachNick);
