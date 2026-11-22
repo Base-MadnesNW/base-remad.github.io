@@ -2933,8 +2933,24 @@
         myRoachKills = 0;
         localStorage.setItem("my_roach_kills", 0);
         updateMyRoachUI(true);
+
+        // Мгновенно обновляем локальный кеш топа
+        const myKey = (myRoachNick || "").toLowerCase();
+        let found = false;
+        liveLeaderboardPlayers.forEach(p => {
+          if (p && p.nick && p.nick.toLowerCase() === myKey) {
+            p.kills = 0;
+            found = true;
+          }
+        });
+        if (!found && myRoachNick) {
+          liveLeaderboardPlayers.push({ nick: myRoachNick, kills: 0 });
+        }
+        localStorage.setItem("roach_leaderboard_cache", JSON.stringify(liveLeaderboardPlayers));
+
         renderRoachTop();
         showFloatingKillText("Счёт сброшен!", myRoachX, myRoachY);
+        syncLeaderboardOnline(true, true);
       }
     }
 
@@ -2958,11 +2974,14 @@
         });
     }
 
-    function syncLeaderboardOnline(immediate = false) {
+    function syncLeaderboardOnline(immediate = false, isReset = false) {
       if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
 
       const doSync = () => {
-        const url = `${LEADERBOARD_API}?nick=${encodeURIComponent(myRoachNick)}&kills=${myRoachKills}`;
+        let url = `${LEADERBOARD_API}?nick=${encodeURIComponent(myRoachNick)}&kills=${myRoachKills}`;
+        if (isReset || myRoachKills === 0) {
+          url += "&reset=1";
+        }
         fetch(url)
           .then(r => r.json())
           .then(data => {
@@ -3001,12 +3020,9 @@
         }
       });
 
-      // Добавляем текущего игрока (или мержим, если ник совпадает)
+      // Добавляем текущего игрока с его реальным текущим счётом
       const myKey = (myRoachNick || "Игрок").toLowerCase();
-      const existing = map.get(myKey);
-      const effectiveKills = existing ? Math.max(existing.kills, myRoachKills) : myRoachKills;
-
-      map.set(myKey, { nick: myRoachNick, kills: effectiveKills, isMe: true });
+      map.set(myKey, { nick: myRoachNick, kills: myRoachKills, isMe: true });
 
       let list = Array.from(map.values());
       list.sort((a, b) => b.kills - a.kills);
