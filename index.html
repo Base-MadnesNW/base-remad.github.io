@@ -1750,7 +1750,10 @@
         </div>
         <div class="my-status-right">
           <div class="my-status-kills" id="topMyKills">0</div>
-          <button class="btn-change-nick" onclick="setMyRoachNick()">Сменить ник</button>
+          <div style="display: flex; gap: 5px;">
+            <button class="btn-change-nick" onclick="setMyRoachNick()">Ник</button>
+            <button class="btn-change-nick" onclick="resetMyRoachScore()" style="color: #ff6b6b; border-color: rgba(255, 71, 87, 0.4);" title="Сбросить количество убийств">Сброс</button>
+          </div>
         </div>
       </div>
 
@@ -2884,11 +2887,12 @@
 
       showFloatingKillText(`+1 ${myRoachNick} 💥`, myRoachX, myRoachY);
 
-      // Обновляем рейтинг, если открыт
+      // Обновляем рейтинг и фоново отправляем в Google Таблицу
       const modal = document.getElementById("roachTopModal");
       if (modal && modal.classList.contains("open")) {
         renderRoachTop();
       }
+      syncLeaderboardOnline(false);
 
       setTimeout(() => {
         myRoachContainer.classList.add('squashed');
@@ -2918,26 +2922,91 @@
           localStorage.setItem("my_roach_nick", myRoachNick);
           updateMyRoachUI();
           renderRoachTop();
+          syncLeaderboardOnline(true);
         }
       }
     }
 
-    // --- РЕЙТИНГ И ТОП ОХОТНИКОВ ---
-    const baseClanRoster = [
-      { nick: "•NW•Osangar", kills: 340 },
-      { nick: "Killproks", kills: 285 },
-      { nick: "NW_Легенда", kills: 190 },
-      { nick: "NW_Сталкер", kills: 125 },
-      { nick: "NW_Фантом", kills: 80 },
-      { nick: "Новичок", kills: 15 }
-    ];
+    // Сброс личного счёта
+    function resetMyRoachScore() {
+      if (confirm(`Сбросить количество убийств для «${myRoachNick}» до 0?`)) {
+        myRoachKills = 0;
+        localStorage.setItem("my_roach_kills", 0);
+        updateMyRoachUI(true);
+        renderRoachTop();
+        showFloatingKillText("Счёт сброшен!", myRoachX, myRoachY);
+      }
+    }
+
+    // --- ОНЛАЙН РЕЙТИНГ И GOOGLE ТАБЛИЦА ---
+    const LEADERBOARD_API = "https://script.google.com/macros/s/AKfycbxwmeK82hE7HjZ5m7HZNqhdmXIPRwrNEkG5aGtw6HOstFunLB7Ox9DOHSxBULX02czzkw/exec";
+    let liveLeaderboardPlayers = [];
+    let syncDebounceTimer = null;
+
+    function fetchLeaderboardOnline() {
+      fetch(LEADERBOARD_API)
+        .then(r => r.json())
+        .then(data => {
+          if (data && data.status === "ok" && Array.isArray(data.players)) {
+            liveLeaderboardPlayers = data.players;
+            localStorage.setItem("roach_leaderboard_cache", JSON.stringify(liveLeaderboardPlayers));
+            renderRoachTop();
+          }
+        })
+        .catch(err => {
+          console.warn("Leaderboard sync error:", err);
+        });
+    }
+
+    function syncLeaderboardOnline(immediate = false) {
+      if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
+
+      const doSync = () => {
+        const url = `${LEADERBOARD_API}?nick=${encodeURIComponent(myRoachNick)}&kills=${myRoachKills}`;
+        fetch(url)
+          .then(r => r.json())
+          .then(data => {
+            if (data && data.status === "ok" && Array.isArray(data.players)) {
+              liveLeaderboardPlayers = data.players;
+              localStorage.setItem("roach_leaderboard_cache", JSON.stringify(liveLeaderboardPlayers));
+              renderRoachTop();
+            }
+          })
+          .catch(() => {});
+      };
+
+      if (immediate) {
+        doSync();
+      } else {
+        syncDebounceTimer = setTimeout(doSync, 1200);
+      }
+    }
 
     function getCombinedLeaderboard() {
-      let map = new Map();
-      baseClanRoster.forEach(p => map.set(p.nick, { nick: p.nick, kills: p.kills }));
+      if (liveLeaderboardPlayers.length === 0) {
+        try {
+          liveLeaderboardPlayers = JSON.parse(localStorage.getItem("roach_leaderboard_cache")) || [];
+        } catch (e) {
+          liveLeaderboardPlayers = [];
+        }
+      }
 
-      // Добавляем текущего игрока с его реальным счётом
-      map.set(myRoachNick, { nick: myRoachNick, kills: myRoachKills, isMe: true });
+      let map = new Map();
+
+      // Добавляем реальных игроков из Google Таблицы
+      liveLeaderboardPlayers.forEach(p => {
+        if (p && p.nick) {
+          const key = p.nick.toLowerCase();
+          map.set(key, { nick: p.nick, kills: parseInt(p.kills) || 0 });
+        }
+      });
+
+      // Добавляем текущего игрока (или мержим, если ник совпадает)
+      const myKey = (myRoachNick || "Игрок").toLowerCase();
+      const existing = map.get(myKey);
+      const effectiveKills = existing ? Math.max(existing.kills, myRoachKills) : myRoachKills;
+
+      map.set(myKey, { nick: myRoachNick, kills: effectiveKills, isMe: true });
 
       let list = Array.from(map.values());
       list.sort((a, b) => b.kills - a.kills);
@@ -2966,6 +3035,11 @@
         topMyAvatar.style.filter = myTier.filter;
       }
 
+      if (list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 20px; color: #888;">Пока нет записей. Убейте гусеницу, чтобы стать первым!</td></tr>';
+        return;
+      }
+
       let html = "";
       list.forEach((item, index) => {
         const rank = index + 1;
@@ -2974,14 +3048,14 @@
         else if (rank === 2) rankBadge = "🥈";
         else if (rank === 3) rankBadge = "🥉";
 
-        const isMe = (item.nick === myRoachNick);
+        const isMe = (item.nick.toLowerCase() === myRoachNick.toLowerCase());
         const itemTier = getRoachTier(item.kills);
 
         html += `
           <tr class="${isMe ? 'my-row' : ''}">
             <td class="rank-cell">${rankBadge}</td>
             <td>
-              <span style="color: ${isMe ? '#2ed573' : (item.nick.includes('NW') ? '#ff6b6b' : '#e2e8f0')}">
+              <span style="color: ${isMe ? '#2ed573' : (item.nick.includes('NW') ? '#ff6b6b' : '#e2e8f0')}; font-weight: 700;">
                 ${escapeHtml(item.nick)}
               </span>
               ${isMe ? ' <span style="font-size: 10px; color: #2ed573; font-weight: bold;">(Вы)</span>' : ''}
@@ -3007,6 +3081,7 @@
       } else {
         renderRoachTop();
         modal.classList.add("open");
+        fetchLeaderboardOnline(); // запрашиваем свежие данные из Google Таблицы
       }
     }
 
@@ -3017,6 +3092,7 @@
     renderThanks();
     loadGlobalRoachKills();
     updateMyRoachUI();
+    fetchLeaderboardOnline();
 
     if (globalRoachContainer) {
       moveRoach();
