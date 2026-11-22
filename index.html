@@ -5145,15 +5145,15 @@
     // --- СИСТЕМА УРОВНЕЙ И СЧЁТЧИКА ТАРАКАНА (10 УРОВНЕЙ) ---
     const roachTiers = [
       { level: 1, name: "Обычный", min: 0, icon: "🪳", color: "#8b95a5", filter: "none" },
-      { level: 2, name: "Бронзовый", min: 10, icon: "🪳", color: "#cd7f32", filter: "sepia(0.8) hue-rotate(-20deg) saturate(2.5) drop-shadow(0 0 8px #cd7f32)" },
-      { level: 3, name: "Серебряный", min: 25, icon: "🪳", color: "#e2e8f0", filter: "grayscale(1) brightness(1.7) contrast(1.2) drop-shadow(0 0 10px #e2e8f0)" },
-      { level: 4, name: "Золотой", min: 50, icon: "🪳", color: "#feca57", filter: "sepia(1) saturate(5) hue-rotate(15deg) brightness(1.2) drop-shadow(0 0 12px #feca57)" },
-      { level: 5, name: "Платиновый", min: 100, icon: "🪳", color: "#54a0ff", filter: "brightness(1.4) hue-rotate(170deg) saturate(3) drop-shadow(0 0 14px #54a0ff)" },
-      { level: 6, name: "Изумрудный мутант", min: 200, icon: "🪲", color: "#2ed573", filter: "hue-rotate(90deg) saturate(4) drop-shadow(0 0 15px #2ed573)" },
-      { level: 7, name: "Рубиновый берсерк", min: 350, icon: "🦂", color: "#ff4757", filter: "hue-rotate(330deg) saturate(5) drop-shadow(0 0 16px #ff4757)" },
-      { level: 8, name: "Алмазный титан", min: 500, icon: "💎", color: "#70a1ff", filter: "drop-shadow(0 0 18px #70a1ff) brightness(1.3)" },
-      { level: 9, name: "Теневой владыка", min: 750, icon: "🦹", color: "#c56cf0", filter: "hue-rotate(260deg) saturate(4) drop-shadow(0 0 20px #c56cf0)" },
-      { level: 10, name: "Космический Пожиратель", min: 1000, icon: "👾", color: "#ff9ff3", filter: "drop-shadow(0 0 22px #ff9ff3) drop-shadow(0 0 10px #00d2d3)" }
+      { level: 2, name: "Бронзовый", min: 50, icon: "🪳", color: "#cd7f32", filter: "sepia(0.8) hue-rotate(-20deg) saturate(2.5) drop-shadow(0 0 8px #cd7f32)" },
+      { level: 3, name: "Серебряный", min: 100, icon: "🪳", color: "#e2e8f0", filter: "grayscale(1) brightness(1.7) contrast(1.2) drop-shadow(0 0 10px #e2e8f0)" },
+      { level: 4, name: "Золотой", min: 150, icon: "🪳", color: "#feca57", filter: "sepia(1) saturate(5) hue-rotate(15deg) brightness(1.2) drop-shadow(0 0 12px #feca57)" },
+      { level: 5, name: "Платиновый", min: 300, icon: "🪳", color: "#54a0ff", filter: "brightness(1.4) hue-rotate(170deg) saturate(3) drop-shadow(0 0 14px #54a0ff)" },
+      { level: 6, name: "Изумрудный мутант", min: 500, icon: "🪲", color: "#2ed573", filter: "hue-rotate(90deg) saturate(4) drop-shadow(0 0 15px #2ed573)" },
+      { level: 7, name: "Рубиновый берсерк", min: 1000, icon: "🦂", color: "#ff4757", filter: "hue-rotate(330deg) saturate(5) drop-shadow(0 0 16px #ff4757)" },
+      { level: 8, name: "Алмазный титан", min: 3000, icon: "💎", color: "#70a1ff", filter: "drop-shadow(0 0 18px #70a1ff) brightness(1.3)" },
+      { level: 9, name: "Теневой владыка", min: 5000, icon: "🦹", color: "#c56cf0", filter: "hue-rotate(260deg) saturate(4) drop-shadow(0 0 20px #c56cf0)" },
+      { level: 10, name: "Космический Пожиратель", min: 10000, icon: "👾", color: "#ff9ff3", filter: "drop-shadow(0 0 22px #ff9ff3) drop-shadow(0 0 10px #00d2d3)" }
     ];
 
     let globalRoachKills = 0;
