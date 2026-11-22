@@ -742,26 +742,6 @@
         padding: 0 10px;
       }
 
-
-      .roach-counter-widget {
-        top: 12px;
-        right: 10px;
-        padding: 5px 10px;
-        gap: 7px;
-        border-radius: 9px;
-      }
-      .roach-widget-icon {
-        font-size: 1.3rem;
-      }
-      .roach-widget-num {
-        font-size: 0.95rem;
-      }
-      .roach-widget-label {
-        font-size: 0.65rem;
-      }
-      .roach-widget-tier {
-        font-size: 0.7rem;
-      }
       header {
         padding: 22px 0 12px;
       }
@@ -1045,15 +1025,28 @@
     }
 
 
-    /* Виджет счётчика тараканов (справа вверху) */
+    /* Шапка и виджет счётчика тараканов */
     .header-container {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .header-container h1 {
+      order: 1;
+    }
+
+    .header-container .subtitle {
+      order: 2;
     }
 
     .roach-counter-widget {
       position: absolute;
       right: 20px;
       top: 24px;
+      order: 3;
       display: inline-flex;
       align-items: center;
       gap: 10px;
@@ -1134,35 +1127,65 @@
       100% { transform: scale(1); }
     }
 
-    /* Всплывающий текст +1 при убийстве таракана */
+    /* Адаптив для планшетов и смартфонов: плашка размещается аккуратно по центру под описанием */
+    @media (max-width: 860px) {
+      .roach-counter-widget {
+        position: static;
+        order: 3;
+        margin: 12px auto 0;
+        padding: 6px 13px;
+        gap: 8px;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+      }
+      .roach-widget-icon {
+        font-size: 1.35rem;
+      }
+      .roach-widget-num {
+        font-size: 1rem;
+      }
+      .roach-widget-label {
+        font-size: 0.65rem;
+      }
+      .roach-widget-tier {
+        font-size: 0.72rem;
+      }
+    }
+
+    /* Всплывающий текст при убийстве или поиске таракана */
     .floating-kill-text {
       position: fixed;
       font-family: 'JetBrains Mono', monospace;
       font-weight: 800;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       color: #ff4757;
       text-shadow: 0 0 10px rgba(255, 71, 87, 0.8), 0 2px 4px rgba(0,0,0,0.8);
       pointer-events: none;
-      z-index: 10000;
+      z-index: 100001;
+      white-space: nowrap;
       animation: floatUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     @keyframes floatUp {
-      0% { opacity: 1; transform: translate(0, 0) scale(0.8); }
-      50% { opacity: 1; transform: translate(0, -35px) scale(1.15); }
-      100% { opacity: 0; transform: translate(0, -60px) scale(1); }
+      0% { opacity: 1; transform: translate(0, 0) scale(0.85); }
+      50% { opacity: 1; transform: translate(0, -30px) scale(1.1); }
+      100% { opacity: 0; transform: translate(0, -55px) scale(1); }
     }
 
     /* --- СТИЛИ ДЛЯ ТАРАКАНА --- */
     #cockroach {
       position: fixed;
-      top: calc(100vh - 50px);
-      left: 0;
-      font-size: 30px;
+      top: calc(100vh - 130px);
+      left: 20px;
+      font-size: 32px;
       cursor: pointer;
       z-index: 9999;
       user-select: none;
-      transition: transform 0.1s linear, opacity 0.3s ease; 
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      padding: 16px;
+      margin: -16px;
+      transition: transform 0.1s linear, opacity 0.3s ease, filter 0.3s ease; 
       transform: scaleX(-1); 
     }
     @keyframes skitter {
@@ -1175,6 +1198,28 @@
     .squashed {
       opacity: 0 !important;
       pointer-events: none;
+    }
+
+    /* Подсветка / маяк при клике на счётчик ("Где таракан?") */
+    @keyframes roachSummonBeacon {
+      0% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.95), 0 0 20px rgba(255, 215, 0, 0.9);
+        transform: scale(1.35);
+      }
+      50% {
+        box-shadow: 0 0 0 24px rgba(255, 71, 87, 0), 0 0 45px rgba(255, 71, 87, 0.85);
+        transform: scale(1.65);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0), 0 0 20px rgba(255, 215, 0, 0.9);
+        transform: scale(1.35);
+      }
+    }
+    .roach-summon-beacon {
+      border-radius: 50% !important;
+      animation: roachSummonBeacon 0.5s infinite alternate !important;
+      background: radial-gradient(circle, rgba(255, 71, 87, 0.4) 0%, rgba(255, 215, 0, 0.2) 65%, transparent 100%) !important;
+      z-index: 100000 !important;
     }
   </style>
 
@@ -1371,7 +1416,7 @@
   </footer>
 
   <!-- Таракан -->
-  <div id="cockroach" onclick="squashRoach()">🪳</div>
+  <div id="cockroach" onclick="squashRoach(event)" ontouchstart="squashRoach(event)">🪳</div>
 
   <script>
     // --- ДАННЫЕ БОССОВ ---
@@ -5114,12 +5159,13 @@
     let globalRoachKills = 0;
     let roachElement = document.getElementById("cockroach");
     let isSquashed = false;
-    let roachX = 0;
-    let roachY = window.innerHeight - 50;
+    let roachX = Math.max(30, Math.round(window.innerWidth * 0.3));
+    let roachY = Math.max(120, window.innerHeight - 150);
     let roachDirectionX = 1;
     let roachSpeedX = 1.5;
-    let roachSpeedY = 0.5;
+    let roachSpeedY = 0.6;
     let roachDirY = 1;
+    let summonTimeout = null;
 
     function getRoachTier(kills) {
       let current = roachTiers[0];
@@ -5184,37 +5230,59 @@
       const el = document.createElement("div");
       el.className = "floating-kill-text";
       el.innerText = text;
-      el.style.left = `${Math.max(10, Math.min(window.innerWidth - 100, x))}px`;
-      el.style.top = `${Math.max(10, y - 20)}px`;
+      // Ограничиваем координаты, чтобы текст не вылезал за границы экрана
+      const clampedX = Math.max(15, Math.min(window.innerWidth - 240, x - 20));
+      const clampedY = Math.max(50, Math.min(window.innerHeight - 60, y - 25));
+      el.style.left = `${clampedX}px`;
+      el.style.top = `${clampedY}px`;
       document.body.appendChild(el);
       setTimeout(() => el.remove(), 1200);
     }
 
     function focusRoach() {
-      if (roachElement) {
-        roachElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        showFloatingKillText("Таракан здесь! Лови! 🪳", roachX, roachY);
+      if (!roachElement) return;
+
+      if (isSquashed) {
+        showFloatingKillText("Таракан раздавлен! Возродится с секунды на секунду... ⏳", window.innerWidth / 2 - 140, window.innerHeight / 2);
+        return;
       }
+
+      // Призываем таракана прямо в видимый центр экрана игрока
+      roachX = Math.round(window.innerWidth / 2 - 16);
+      roachY = Math.round(window.innerHeight / 2 - 16);
+      roachElement.style.left = roachX + "px";
+      roachElement.style.top = roachY + "px";
+
+      // Включаем яркий маяк-пульсацию вокруг таракана
+      roachElement.classList.add("roach-summon-beacon");
+      if (summonTimeout) clearTimeout(summonTimeout);
+      summonTimeout = setTimeout(() => {
+        if (roachElement) roachElement.classList.remove("roach-summon-beacon");
+      }, 3500);
+
+      showFloatingKillText("Таракан здесь! Лови! 🪳", roachX, roachY - 25);
     }
 
     function moveRoach() {
       if (isSquashed || !roachElement) return;
 
-      const maxWidth = window.innerWidth - 45;
+      const maxWidth = window.innerWidth - 55;
       roachX += roachSpeedX * roachDirectionX;
 
       if (roachX >= maxWidth) {
         roachX = maxWidth;
         roachDirectionX = -1;
         roachElement.style.transform = "scaleX(1)"; 
-      } else if (roachX <= 0) {
-        roachX = 0;
+      } else if (roachX <= 10) {
+        roachX = 10;
         roachDirectionX = 1;
         roachElement.style.transform = "scaleX(-1)"; 
       }
 
-      const minY = window.innerHeight - 90;
-      const maxY = window.innerHeight - 25;
+      // Безопасный отступ от нижних панелей Safari / Chrome / VK на мобильных и планшетах (не менее 85px)
+      const bottomSafeMargin = 85;
+      const minY = Math.max(80, window.innerHeight - 200);
+      const maxY = Math.max(minY + 30, window.innerHeight - bottomSafeMargin);
 
       roachY += roachSpeedY * roachDirY;
 
@@ -5236,9 +5304,16 @@
       requestAnimationFrame(moveRoach);
     }
 
-    function squashRoach() {
+    function squashRoach(e) {
+      if (e) {
+        if (e.cancelable) e.preventDefault();
+        e.stopPropagation();
+      }
       if (isSquashed || !roachElement) return;
       isSquashed = true;
+
+      if (summonTimeout) clearTimeout(summonTimeout);
+      roachElement.classList.remove("roach-summon-beacon");
 
       // Анимация раздавливания
       roachElement.classList.remove('running');
@@ -5273,8 +5348,8 @@
           const tier = getRoachTier(globalRoachKills);
           roachElement.innerHTML = tier.icon;
           roachElement.style.filter = tier.filter;
-          roachX = 0;
-          roachY = window.innerHeight - 50;
+          roachX = Math.max(30, Math.round(window.innerWidth * 0.2));
+          roachY = Math.max(100, window.innerHeight - 140);
           roachDirectionX = 1;
           roachDirY = 1;
           roachElement.classList.remove('squashed');
