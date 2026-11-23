@@ -2705,7 +2705,7 @@
       if (summonTimeout) clearTimeout(summonTimeout);
       summonTimeout = setTimeout(() => {
         if (roachElement) roachElement.classList.remove("roach-summon-beacon");
-      }, 3500);
+      }, 10000);
 
       showFloatingKillText("Гусеница •NW• здесь! 🐛", roachX, roachY - 25);
     }
@@ -2728,7 +2728,7 @@
       if (mySummonTimeout) clearTimeout(mySummonTimeout);
       mySummonTimeout = setTimeout(() => {
         if (myRoachIconEl) myRoachIconEl.classList.remove("roach-summon-beacon");
-      }, 3500);
+      }, 12500);
 
       showFloatingKillText(`Гусеница ${myRoachNick} здесь! 🐛`, myRoachX, myRoachY - 25);
     }
