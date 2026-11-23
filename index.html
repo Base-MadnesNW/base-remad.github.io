@@ -2705,7 +2705,7 @@
       if (summonTimeout) clearTimeout(summonTimeout);
       summonTimeout = setTimeout(() => {
         if (roachElement) roachElement.classList.remove("roach-summon-beacon");
-      }, 10000);
+      }, 3500);
 
       showFloatingKillText("Гусеница •NW• здесь! 🐛", roachX, roachY - 25);
     }
@@ -2728,7 +2728,7 @@
       if (mySummonTimeout) clearTimeout(mySummonTimeout);
       mySummonTimeout = setTimeout(() => {
         if (myRoachIconEl) myRoachIconEl.classList.remove("roach-summon-beacon");
-      }, 12500);
+      }, 3500);
 
       showFloatingKillText(`Гусеница ${myRoachNick} здесь! 🐛`, myRoachX, myRoachY - 25);
     }
@@ -2820,7 +2820,7 @@
           roachDirY = 1;
           globalRoachContainer.classList.remove('squashed');
           moveRoach();
-        }, 3000);
+        }, 10000);
       }, 1000);
     }
 
@@ -2907,7 +2907,7 @@
           myRoachDirY = -1;
           myRoachContainer.classList.remove('squashed');
           moveMyRoach();
-        }, 2500);
+        }, 9000);
       }, 1000);
     }
 
