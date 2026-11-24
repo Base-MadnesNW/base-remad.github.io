@@ -3281,21 +3281,21 @@
             name: "Минотавр",
             source: "pandora", // "pandora" или "dice"
             image: "img/Минотавр_Сет.png", 
-            items: ["Штаны", "Куртка", "Перчатки", "Обувь", "Маска", "Шляпа", "Амулет", "Оружие", "Питомец"]
+            items: ["Штаны", "Куртка", "Перчатки", "Обувь", "Маска", "Шляпа", "Амулет", "Оружие1", "Оружие2", "Питомец"]
         },         
         {
             id: "letopis",
             name: "Летописец",
             source: "dice",
             image: "img/Летописец_Сет.png",
-            items: ["Штаны", "Куртка", "Перчатки", "Обувь", "Маска", "Шляпа", "Амулет", "Оружие"]
+            items: ["Штаны", "Куртка", "Перчатки", "Обувь", "Маска", "Амулет", "Оружие"]
         },
       {
             id: "Chistilhik",
             name: "Чистильщик",
             source: "dice",
             image: "img/Чистильщик_set.png",
-            items: ["Штаны", "Куртка", "Перчатки", "Обувь", "Маска", "Шляпа", "Амулет","Оружие", "Питомец"]
+            items: ["Штаны", "Куртка", "Перчатки", "Обувь", "Маска", "Амулет","Оружие", "Питомец"]
         }
     ];
 
@@ -3320,6 +3320,8 @@
         if (name.includes('маска')) return `img/${prefix}Маска.png`;
         if (name.includes('шляпа') || name.includes('головной убор')) return `img/${prefix}Шляпа.png`;
         if (name.includes('оружие') || name.includes('нож') || name.includes('тесак') || name.includes('меч')) return `img/${prefix}Оружие.png`;
+       if (name.includes('оружие1') || name.includes('нож1') || name.includes('тесак1') || name.includes('меч1')) return `img/${prefix}Оружие1.png`;
+       if (name.includes('оружие2') || name.includes('нож2') || name.includes('тесак2') || name.includes('меч2')) return `img/${prefix}Оружи2.png`;
         if (name.includes('амулет') || name.includes('аксессуар')) return `img/${prefix}Амулет.png`;
         if (name.includes('питомец')) return `img/${prefix}Питомец.png`;
       
