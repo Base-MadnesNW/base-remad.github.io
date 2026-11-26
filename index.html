@@ -3115,24 +3115,32 @@
     // --- ОНЛАЙН РЕЙТИНГ И GOOGLE ТАБЛИЦА ---
     const LEADERBOARD_API = "https://script.google.com/macros/s/AKfycbxwmeK82hE7HjZ5m7HZNqhdmXIPRwrNEkG5aGtw6HOstFunLB7Ox9DOHSxBULX02czzkw/exec";
     let liveLeaderboardPlayers = [];
+    let isLeaderboardLoadedFromServer = false;
     let syncDebounceTimer = null;
 
     function fetchLeaderboardOnline() {
-      fetch(LEADERBOARD_API)
+      // Добавляем параметр t для обхода HTTP кеша браузера (cache-busting)
+      const fetchUrl = `${LEADERBOARD_API}?t=${Date.now()}`;
+      fetch(fetchUrl, { cache: "no-store" })
         .then(r => r.json())
         .then(data => {
           if (data && data.status === "ok" && Array.isArray(data.players)) {
+            isLeaderboardLoadedFromServer = true;
             liveLeaderboardPlayers = data.players;
             localStorage.setItem("roach_leaderboard_cache", JSON.stringify(liveLeaderboardPlayers));
 
-            // Если на сервере очков больше, чем локально (например, играли с другого устройства) — подтягиваем прогресс
-            if (myRoachNick) {
+            // Синхронизируем локальный счёт с Google Таблицей:
+            if (myRoachNick && myRoachNick.trim().toLowerCase() !== "игрок") {
               const myEntry = liveLeaderboardPlayers.find(p => p.nick && p.nick.toLowerCase() === myRoachNick.toLowerCase());
-              if (myEntry && myEntry.kills > myRoachKills) {
+              if (myEntry) {
+                // Если игрок есть в таблице — выставляем ровно то количество, что в таблице
                 myRoachKills = parseInt(myEntry.kills) || 0;
-                localStorage.setItem("my_roach_kills", myRoachKills);
-                updateMyRoachUI(true);
+              } else {
+                // Если игрока НЕТ в таблице (таблицу очистили в Google) — сбрасываем локальный счёт в 0!
+                myRoachKills = 0;
               }
+              localStorage.setItem("my_roach_kills", myRoachKills);
+              updateMyRoachUI(true);
             }
 
             renderRoachTop();
@@ -3150,22 +3158,23 @@
       if (syncDebounceTimer) clearTimeout(syncDebounceTimer);
 
       const doSync = () => {
-        let url = `${LEADERBOARD_API}?nick=${encodeURIComponent(myRoachNick)}&kills=${myRoachKills}`;
+        let url = `${LEADERBOARD_API}?nick=${encodeURIComponent(myRoachNick)}&kills=${myRoachKills}&t=${Date.now()}`;
         // reset=1 передается ИСКЛЮЧИТЕЛЬНО по явному нажатию кнопки «Сброс»
         if (isReset) {
           url += "&reset=1";
         }
-        fetch(url)
+        fetch(url, { cache: "no-store" })
           .then(r => r.json())
           .then(data => {
             if (data && data.status === "ok" && Array.isArray(data.players)) {
+              isLeaderboardLoadedFromServer = true;
               liveLeaderboardPlayers = data.players;
               localStorage.setItem("roach_leaderboard_cache", JSON.stringify(liveLeaderboardPlayers));
 
               // Синхронизируем локальные очки с серверными при ответе
               if (myRoachNick && !isReset && myRoachNick.toLowerCase() !== "игрок") {
                 const myEntry = liveLeaderboardPlayers.find(p => p.nick && p.nick.toLowerCase() === myRoachNick.toLowerCase());
-                if (myEntry && myEntry.kills > myRoachKills) {
+                if (myEntry) {
                   myRoachKills = parseInt(myEntry.kills) || 0;
                   localStorage.setItem("my_roach_kills", myRoachKills);
                   updateMyRoachUI(true);
@@ -3186,7 +3195,8 @@
     }
 
     function getCombinedLeaderboard() {
-      if (liveLeaderboardPlayers.length === 0) {
+      // До первого ответа сервера показываем кеш (чтобы не мелькала пустая таблица)
+      if (!isLeaderboardLoadedFromServer && liveLeaderboardPlayers.length === 0) {
         try {
           liveLeaderboardPlayers = JSON.parse(localStorage.getItem("roach_leaderboard_cache")) || [];
         } catch (e) {
@@ -3204,10 +3214,12 @@
         }
       });
 
-      // Добавляем текущего игрока с его реальным текущим счётом (только если задан персональный ник)
+      // Добавляем текущего игрока, только если у него есть хотя бы 1 очко или если он уже есть в таблице
       if (myRoachNick && myRoachNick.trim().toLowerCase() !== "игрок") {
         const myKey = myRoachNick.toLowerCase();
-        map.set(myKey, { nick: myRoachNick, kills: myRoachKills, isMe: true });
+        if (myRoachKills > 0 || map.has(myKey)) {
+          map.set(myKey, { nick: myRoachNick, kills: myRoachKills, isMe: true });
+        }
       }
 
       let list = Array.from(map.values());
