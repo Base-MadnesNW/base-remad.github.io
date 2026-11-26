@@ -3032,12 +3032,12 @@
 
       showFloatingKillText(`+1 ${myRoachNick} 💥`, myRoachX, myRoachY);
 
-      // Обновляем рейтинг и фоново отправляем в Google Таблицу
+      // Обновляем рейтинг и сразу отправляем в Google Таблицу
       const modal = document.getElementById("roachTopModal");
       if (modal && modal.classList.contains("open")) {
         renderRoachTop();
       }
-      syncLeaderboardOnline(false);
+      syncLeaderboardOnline(true);
 
       setTimeout(() => {
         myRoachContainer.classList.add('squashed');
@@ -3116,6 +3116,7 @@
     const LEADERBOARD_API = "https://script.google.com/macros/s/AKfycbxwmeK82hE7HjZ5m7HZNqhdmXIPRwrNEkG5aGtw6HOstFunLB7Ox9DOHSxBULX02czzkw/exec";
     let liveLeaderboardPlayers = [];
     let isLeaderboardLoadedFromServer = false;
+    let hasInitialSyncDone = false;
     let syncDebounceTimer = null;
 
     function fetchLeaderboardOnline() {
@@ -3133,11 +3134,21 @@
             if (myRoachNick && myRoachNick.trim().toLowerCase() !== "игрок") {
               const myEntry = liveLeaderboardPlayers.find(p => p.nick && p.nick.toLowerCase() === myRoachNick.toLowerCase());
               if (myEntry) {
-                // Если игрок есть в таблице — выставляем ровно то количество, что в таблице
-                myRoachKills = parseInt(myEntry.kills) || 0;
+                const serverKills = parseInt(myEntry.kills) || 0;
+                if (!hasInitialSyncDone) {
+                  // При первой загрузке страницы берем ровно то, что на сервере
+                  myRoachKills = serverKills;
+                  hasInitialSyncDone = true;
+                } else {
+                  // Во время игры: никогда не затираем только что сделанный +1 килл старым ответом
+                  myRoachKills = Math.max(myRoachKills, serverKills);
+                }
               } else {
-                // Если игрока НЕТ в таблице (таблицу очистили в Google) — сбрасываем локальный счёт в 0!
-                myRoachKills = 0;
+                // Если игрока вообще нет в таблице (таблицу очистили):
+                if (!hasInitialSyncDone) {
+                  myRoachKills = 0;
+                  hasInitialSyncDone = true;
+                }
               }
               localStorage.setItem("my_roach_kills", myRoachKills);
               updateMyRoachUI(true);
@@ -3175,7 +3186,8 @@
               if (myRoachNick && !isReset && myRoachNick.toLowerCase() !== "игрок") {
                 const myEntry = liveLeaderboardPlayers.find(p => p.nick && p.nick.toLowerCase() === myRoachNick.toLowerCase());
                 if (myEntry) {
-                  myRoachKills = parseInt(myEntry.kills) || 0;
+                  const serverKills = parseInt(myEntry.kills) || 0;
+                  myRoachKills = Math.max(myRoachKills, serverKills);
                   localStorage.setItem("my_roach_kills", myRoachKills);
                   updateMyRoachUI(true);
                 }
