@@ -2302,7 +2302,7 @@
               }
 
               const baseImgPath = `img/${safeBossName}_${safeItemName}${genderSuffix}`;
-              const imgHtml = `<img src="${baseImgPath}.png" onerror="if(!this.dataset.triedJpg){this.dataset.triedJpg=true; this.src='${baseImgPath}.jpg';} else {this.style.display='none';}" style="width: 28px; height: 28px; object-fit: contain; border-radius: 4px; background: rgba(255,255,255,0.08); padding: 2px;">`;
+              const imgHtml = `<img src="${baseImgPath}.png" onerror="if(!this.dataset.triedJpg){this.dataset.triedJpg=true; this.src='${baseImgPath}.jpg';} else {this.style.display='none';}" style="width: 36px; height: 36px; object-fit: contain; border-radius: 4px; background: rgba(255,255,255,0.08); padding: 2px;">`;
 
               return `<label class="checkbox-label ${isChecked ? 'checked' : ''}" id="lbl_${id}">
                 <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSave('${id}', this.checked, this.parentElement)">
