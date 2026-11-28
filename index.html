@@ -2636,13 +2636,16 @@
                     let totalW = directW;
 
                     // Обновляем лучший результат
-                    if (totalW > bestW) {
+                    let totalActions = craftZ + craftS + craftX + totalW;
+                    
+                    if (totalW > bestW || (totalW === bestW && totalActions < bestPlan.totalActions)) {
                         bestW = totalW;
                         bestPlan = {
                             craftZ, craftS, craftX,
                             directW,
                             directS, directZ, directX,
-                            totalW
+                            totalW,
+                            totalActions // Сохраняем количество действий
                         };
                     }
                 }
