@@ -3484,13 +3484,12 @@
         });
     }
 
-   // --- ЛОГИКА ДОЛГОВ БУЙНЫХ (ПО ЭТАЖАМ) ---
     // --- ЛОГИКА ДОЛГОВ БУЙНЫХ (С ОТМЕТКАМИ) ---
     function renderDebts() {
         const container = document.getElementById("debtList");
         if (!container) return;
         
-        const floors = [...new Set(bosses.map(b => b.floor.split('-')[0]))].sort();
+        const floors = [...new Set(bosses.map(b => b.floor.split('-')[0]))].sort((a, b) => { if (a === '$') return 1; if (b === '$') return -1; return a.localeCompare(b); });
         let html = "";
 
         floors.forEach(floor => {
