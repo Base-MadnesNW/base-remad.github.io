@@ -1757,19 +1757,19 @@
 
     <!-- 1. БУЙНЫЕ -->
     <section id="bosses" class="tab-section active">
-       <!-- ПОДКЛАДКА: ДОЛГИ БУЙНЫХ -->
-      <div class="floor-block" style="margin-bottom: 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card);">
-        <button class="floor-header" onclick="toggleFloor('bossDebts')" style="border-left-color: var(--accent); background: transparent; border: none; border-bottom: 1px solid var(--border);">
+      <!-- ПОДКЛАДКА: ДОЛГИ (ЗАПИСКА) -->
+      <div class="floor-block" style="margin-bottom: 20px;">
+        <button class="floor-header" onclick="toggleFloor('bossDebts')" style="border-left-color: #d4a373;">
             <span style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 24px;">📋Долги буйных</span>
-                <span>(не выбитые вещи)</span>
+                <span style="font-size: 24px;">📝</span>
+                <span>Записки должника (не выбитые вещи)</span>
             </span>
             <span class="arrow-icon">▼</span>
         </button>
-        <div class="floor-content" id="bossDebts" style="padding: 15px;">
-            <div id="debtList"></div>
+        <div class="floor-content" id="bossDebts" style="padding: 15px 0;">
+            <div id="debtList" class="paper-wrapper"></div>
         </div>
-      </div> 
+      </div>
       <div class="toolbar">
         <input type="text" class="search-input" id="searchBoss" placeholder="Поиск буйного (например: Руди, Вальтер)..." oninput="filterBosses()">
         <div class="toolbar-actions">
