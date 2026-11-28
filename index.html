@@ -1636,19 +1636,19 @@
 
     <!-- 1. БУЙНЫЕ -->
     <section id="bosses" class="tab-section active">
-            <!-- ПОДКЛАДКА: ДОЛГИ БУЙНЫХ -->
-      <div class="floor-block" style="margin-bottom: 20px; border: 1px solid var(--accent); border-radius: var(--radius);">
-        <button class="floor-header" onclick="toggleFloor('bossDebts')" style="border-left-color: var(--accent);">
+       <!-- ПОДКЛАДКА: ДОЛГИ БУЙНЫХ -->
+      <div class="floor-block" style="margin-bottom: 20px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card);">
+        <button class="floor-header" onclick="toggleFloor('bossDebts')" style="border-left-color: var(--accent); background: transparent; border: none; border-bottom: 1px solid var(--border);">
             <span style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 24px;">📋</span>
                 <span>Долги буйных (не выбитые вещи)</span>
             </span>
             <span class="arrow-icon">▼</span>
         </button>
-        <div class="floor-content open" id="bossDebts" style="padding: 15px;">
+        <div class="floor-content" id="bossDebts" style="padding: 15px;">
             <div id="debtList"></div>
         </div>
-      </div>      
+      </div> 
       <div class="toolbar">
         <input type="text" class="search-input" id="searchBoss" placeholder="Поиск буйного (например: Руди, Вальтер)..." oninput="filterBosses()">
         <div class="toolbar-actions">
@@ -3484,87 +3484,93 @@
         });
     }
 
-     // --- ЛОГИКА ДОЛГОВ БУЙНЫХ ---
+   // --- ЛОГИКА ДОЛГОВ БУЙНЫХ (ПО ЭТАЖАМ) ---
     function renderDebts() {
         const container = document.getElementById("debtList");
         if (!container) return;
         
-        let debtHtml = "";
-        let totalDebts = 0;
+        // Группируем боссов по этажам
+        const floors = [...new Set(bosses.map(b => b.floor.split('-')[0]))].sort();
+        let html = "";
 
-        // Проходимся по всем боссам
-        bosses.forEach(boss => {
-            // Пропускаем, если у босса нет дропа или там только "Комната"
-            if (!boss.drop || boss.drop === "Комната" || boss.drop === "?" || boss.drop === "—") return;
+        floors.forEach(floor => {
+            const floorBosses = bosses.filter(b => b.floor.startsWith(floor));
+            let floorDebtHtml = "";
+            let floorDebtsCount = 0;
 
-            // Разбираем дроп на список предметов
-            let items = [];
-            if (boss.drop.includes('|')) {
-                // Для этажа D (разделение М/Ж)
-                const parts = boss.drop.split('|');
-                // Берем и мужской, и женский дроп, убираем скобки и лишнее
-                let maleItems = parts[0].replace('(М):', '').split(',').map(s => s.trim());
-                let femaleItems = parts[1].replace('(Ж):', '').split(',').map(s => s.trim());
-                items = [...new Set([...maleItems, ...femaleItems])]; // Объединяем уникальные
-            } else {
-                items = boss.drop.split(',').map(s => s.trim());
-            }
+            floorBosses.forEach(boss => {
+                // Пропускаем, если нет дропа или только комната
+                if (!boss.drop || boss.drop === "Комната" || boss.drop === "?" || boss.drop === "—") return;
 
-            // Убираем "Комната" из списка
-            items = items.filter(i => i && i !== "Комната");
-
-            // Проверяем, какие предметы не выбиты
-            let missingItems = [];
-            items.forEach(item => {
-                // Очищаем имя от (x2) и т.д.
-                const cleanName = item.replace(/\(x\d+\)/g, '').trim();
-                
-                // Формируем ID, как в чекбоксах (нужно угадать префикс, если есть М/Ж)
-                // Для простоты проверяем оба варианта (M и F), если это этаж D
-                let isFound = false;
-                
-                // Пытаемся найти галочку в localStorage
-                // Ключ формируется как: drop_ИмяБосса_префикс_ИмяПредмета
-                // Мы не знаем точный префикс (M, F или S), поэтому проверяем все возможные
-                const possiblePrefixes = ['M', 'F', 'S', ''];
-                for (let prefix of possiblePrefixes) {
-                    const key = `drop_${boss.name}_${prefix}_${cleanName}`;
-                    if (localStorage.getItem(key) === 'true') {
-                        isFound = true;
-                        break;
-                    }
+                // Разбираем дроп
+                let items = [];
+                if (boss.drop.includes('|')) {
+                    const parts = boss.drop.split('|');
+                    let maleItems = parts[0].replace('(М):', '').split(',').map(s => s.trim());
+                    let femaleItems = parts[1].replace('(Ж):', '').split(',').map(s => s.trim());
+                    items = [...new Set([...maleItems, ...femaleItems])];
+                } else {
+                    items = boss.drop.split(',').map(s => s.trim());
                 }
 
-                if (!isFound) {
-                    missingItems.push(item);
+                items = items.filter(i => i && i !== "Комната");
+                let missingItems = [];
+
+                items.forEach(item => {
+                    const cleanName = item.replace(/\(x\d+\)/g, '').trim();
+                    let isFound = false;
+                    
+                    // Проверяем галочки в localStorage
+                    const possiblePrefixes = ['M', 'F', 'S', ''];
+                    for (let prefix of possiblePrefixes) {
+                        const key = `drop_${boss.name}_${prefix}_${cleanName}`;
+                        if (localStorage.getItem(key) === 'true') {
+                            isFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!isFound) missingItems.push(item);
+                });
+
+                if (missingItems.length > 0) {
+                    floorDebtsCount++;
+                    floorDebtHtml += `
+                    <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #e74c3c;">
+                        <div style="font-weight: bold; color: #f39c12; margin-bottom: 5px;">
+                            ${boss.name} <span style="font-size: 12px; color: #888;">(${boss.floor})</span>
+                        </div>
+                        <div style="font-size: 13px; color: #ccc;">
+                            Не выбито: <span style="color: #ff6b6b;">${missingItems.join(', ')}</span>
+                        </div>
+                    </div>`;
                 }
             });
 
-            // Если есть невыбитые вещи, добавляем босса в список
-            if (missingItems.length > 0) {
-                totalDebts++;
-                debtHtml += `
-                <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #e74c3c;">
-                    <div style="font-weight: bold; color: #f39c12; margin-bottom: 5px;">
-                        ${boss.name} <span style="font-size: 12px; color: #888;">(${boss.floor})</span>
-                    </div>
-                    <div style="font-size: 13px; color: #ccc;">
-                        Не выбито: <span style="color: #ff6b6b;">${missingItems.join(', ')}</span>
+            // Если на этаже есть долги, добавляем подвкладку
+            if (floorDebtsCount > 0) {
+                const subFloorId = `debt-floor-${floor}`;
+                html += `
+                <div style="margin-bottom: 10px;">
+                    <button class="floor-header" onclick="toggleFloor('${subFloorId}')" style="background: rgba(255,255,255,0.05); border-left-color: var(--gold); font-size: 14px; padding: 10px;">
+                        <span>Этаж ${floor} <span style="color: #888; font-size: 12px; margin-left: 10px;">(долгов: ${floorDebtsCount})</span></span>
+                        <span class="arrow-icon">▼</span>
+                    </button>
+                    <!-- По умолчанию этажи тоже свернуты -->
+                    <div class="floor-content" id="${subFloorId}" style="padding-top: 10px;">
+                        ${floorDebtHtml}
                     </div>
                 </div>`;
             }
         });
 
-        // Выводим итог
-        if (totalDebts === 0) {
+        if (html === "") {
             container.innerHTML = `<div style="text-align: center; padding: 20px; color: #2ecc71; font-weight: bold;">🎉 Все вещи выбиты! Долгов нет.</div>`;
         } else {
-            container.innerHTML = `<div style="margin-bottom: 10px; color: #aaa;">Всего боссов с долгами: <span style="color: #e74c3c; font-weight: bold;">${totalDebts}</span></div>` + debtHtml;
+            container.innerHTML = html;
         }
     }
 
-  
-   
 
     // Инициализация
     renderDebts();
