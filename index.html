@@ -3485,11 +3485,11 @@
     }
 
    // --- ЛОГИКА ДОЛГОВ БУЙНЫХ (ПО ЭТАЖАМ) ---
+    // --- ЛОГИКА ДОЛГОВ БУЙНЫХ (С ОТМЕТКАМИ) ---
     function renderDebts() {
         const container = document.getElementById("debtList");
         if (!container) return;
         
-        // Группируем боссов по этажам
         const floors = [...new Set(bosses.map(b => b.floor.split('-')[0]))].sort();
         let html = "";
 
@@ -3499,55 +3499,60 @@
             let floorDebtsCount = 0;
 
             floorBosses.forEach(boss => {
-                // Пропускаем, если нет дропа или только комната
                 if (!boss.drop || boss.drop === "Комната" || boss.drop === "?" || boss.drop === "—") return;
 
-                // Разбираем дроп
                 let items = [];
                 if (boss.drop.includes('|')) {
                     const parts = boss.drop.split('|');
-                    let maleItems = parts[0].replace('(М):', '').split(',').map(s => s.trim());
-                    let femaleItems = parts[1].replace('(Ж):', '').split(',').map(s => s.trim());
-                    items = [...new Set([...maleItems, ...femaleItems])];
+                    items = [...new Set([
+                        ...parts[0].replace('(М):', '').split(',').map(s => s.trim()),
+                        ...parts[1].replace('(Ж):', '').split(',').map(s => s.trim())
+                    ])];
                 } else {
                     items = boss.drop.split(',').map(s => s.trim());
                 }
-
                 items = items.filter(i => i && i !== "Комната");
-                let missingItems = [];
 
+                let missingItemsHtml = "";
                 items.forEach(item => {
                     const cleanName = item.replace(/\(x\d+\)/g, '').trim();
-                    let isFound = false;
                     
-                    // Проверяем галочки в localStorage
+                    // Проверяем, выбит ли предмет (ищем галочку в localStorage)
+                    let isFound = false;
                     const possiblePrefixes = ['M', 'F', 'S', ''];
                     for (let prefix of possiblePrefixes) {
-                        const key = `drop_${boss.name}_${prefix}_${cleanName}`;
-                        if (localStorage.getItem(key) === 'true') {
+                        if (localStorage.getItem(`drop_${boss.name}_${prefix}_${cleanName}`) === 'true') {
                             isFound = true;
                             break;
                         }
                     }
 
-                    if (!isFound) missingItems.push(item);
+                    // Если предмет НЕ выбит, показываем его с чекбоксом
+                    if (!isFound) {
+                        const uniqueId = `debt_${boss.name}_${cleanName}`;
+                        missingItemsHtml += `
+                            <label class="checkbox-label" style="margin-right: 6px; margin-bottom: 6px; display: inline-flex; align-items: center; gap: 5px;" id="lbl_${uniqueId}">
+                                <input type="checkbox" onchange="toggleDebtItem('${boss.name}', '${cleanName}', this)">
+                                <span>${item}</span>
+                            </label>
+                        `;
+                    }
                 });
 
-                if (missingItems.length > 0) {
+                if (missingItemsHtml !== "") {
                     floorDebtsCount++;
                     floorDebtHtml += `
                     <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #e74c3c;">
-                        <div style="font-weight: bold; color: #f39c12; margin-bottom: 5px;">
+                        <div style="font-weight: bold; color: #f39c12; margin-bottom: 8px;">
                             ${boss.name} <span style="font-size: 12px; color: #888;">(${boss.floor})</span>
                         </div>
-                        <div style="font-size: 13px; color: #ccc;">
-                            Не выбито: <span style="color: #ff6b6b;">${missingItems.join(', ')}</span>
+                        <div style="display: flex; flex-wrap: wrap;">
+                            ${missingItemsHtml}
                         </div>
                     </div>`;
                 }
             });
 
-            // Если на этаже есть долги, добавляем подвкладку
             if (floorDebtsCount > 0) {
                 const subFloorId = `debt-floor-${floor}`;
                 html += `
@@ -3556,7 +3561,6 @@
                         <span>Этаж ${floor} <span style="color: #888; font-size: 12px; margin-left: 10px;">(долгов: ${floorDebtsCount})</span></span>
                         <span class="arrow-icon">▼</span>
                     </button>
-                    <!-- По умолчанию этажи тоже свернуты -->
                     <div class="floor-content" id="${subFloorId}" style="padding-top: 10px;">
                         ${floorDebtHtml}
                     </div>
@@ -3571,7 +3575,23 @@
         }
     }
 
-
+    // Функция для отметки предмета прямо в списке долгов
+    function toggleDebtItem(bossName, itemName, el) {
+        // Сохраняем галочку во все возможные префиксы (M, F, S), чтобы не гадать
+        const possiblePrefixes = ['M', 'F', 'S'];
+        possiblePrefixes.forEach(prefix => {
+            localStorage.setItem(`drop_${bossName}_${prefix}_${itemName}`, el.checked);
+        });
+        
+        // Меняем стиль лейбла
+        if (el.checked) {
+            el.parentElement.classList.add('checked');
+        } else {
+            el.parentElement.classList.remove('checked');
+        }
+        // Если хочешь, чтобы предмет сразу исчезал — раскомментируй строчку ниже
+         setTimeout(renderDebts, 300);
+    }
     // Инициализация
     renderDebts();
     renderSets();
