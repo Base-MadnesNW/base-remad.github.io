@@ -2571,8 +2571,7 @@
     }
 
     // --- КАЛЬКУЛЯТОР W ---
-    function calculateW() {
-        // Получаем данные
+       function calculateW() {
         const A_init = parseInt(document.getElementById('inp-A').value) || 0;
         const I_init = parseInt(document.getElementById('inp-I').value) || 0;
         const F_init = parseInt(document.getElementById('inp-F').value) || 0;
@@ -2581,104 +2580,89 @@
         const Z_init = parseInt(document.getElementById('inp-Z').value) || 0;
         const W_init = parseInt(document.getElementById('inp-W').value) || 0;
 
-        let bestW = -1;
-        let bestPlan = null;
-        const maxCraft = 3000; 
+        // --- ШАГ 1: ПРЯМЫЕ КРАФТЫ (из того, что есть) ---
+        let curA = A_init, curI = I_init, curF = F_init, curS = S_init, curZ = Z_init, curX = X_init;
+        
+        let w_as = Math.min(Math.floor(curA / 3), Math.floor(curS / 2));
+        curA -= w_as * 3; curS -= w_as * 2;
 
-        // Перебираем варианты
-        for (let craftZ = 0; craftZ <= maxCraft; craftZ++) {
-            if (craftZ * 1 > F_init || craftZ * 1 > A_init) break;
+        let w_iz = Math.min(Math.floor(curI / 3), Math.floor(curZ / 2));
+        curI -= w_iz * 3; curZ -= w_iz * 2;
 
-            for (let craftS = 0; craftS <= maxCraft; craftS++) {
-                if (craftS * 1 > (F_init - craftZ) || craftS * 1 > I_init) break;
+        let w_fx = Math.min(Math.floor(curF / 3), Math.floor(curX / 2));
+        curF -= w_fx * 3; curX -= w_fx * 2;
 
-                for (let craftX = 0; craftX <= maxCraft; craftX++) {
-                    if (craftX * 1 > (I_init - craftS) || craftX * 1 > (A_init - craftZ)) break;
+        let totalDirectW = w_as + w_iz + w_fx;
 
-                    // Остатки после крафта ингредиентов
-                    let curA = A_init - craftZ - craftX;
-                    let curI = I_init - craftS - craftX;
-                    let curF = F_init - craftZ - craftS;
-                    let curS = S_init + craftS;
-                    let curZ = Z_init + craftZ;
-                    let curX = X_init + craftX;
+        // --- ШАГ 2: КРАФТ ИНГРЕДИЕНТОВ (из остатков) ---
+        // Пытаемся сделать Z (F+A), S (F+I), X (I+A), чтобы потом собрать W
+        let craftZ = 0, craftS = 0, craftX = 0;
 
-                    // Считаем, сколько W можно собрать ИЗ ЭТИХ ОСТАТКОВ
-                    let w_as = Math.min(Math.floor(curA / 3), Math.floor(curS / 2));
-                    let w_iz = Math.min(Math.floor(curI / 3), Math.floor(curZ / 2));
-                    let w_fx = Math.min(Math.floor(curF / 3), Math.floor(curX / 2));
+        // Стратегия: сначала крафтим Z (для I), потом S (для A), потом X (для F)
+        // Z: 1F + 1A = 1Z
+        craftZ = Math.min(curF, curA); 
+        curF -= craftZ; curA -= craftZ; curZ += craftZ;
 
-                    let totalW = w_as + w_iz + w_fx;
-                    let totalActions = craftZ + craftS + craftX + totalW;
+        // S: 1F + 1I = 1S
+        craftS = Math.min(curF, curI);
+        curF -= craftS; curI -= craftS; curS += craftS;
 
-                    // Ищем лучший вариант
-                    if (totalW > bestW || (totalW === bestW && totalActions < (bestPlan ? bestPlan.totalActions : Infinity))) {
-                        bestW = totalW;
-                        bestPlan = { craftZ, craftS, craftX, w_as, w_iz, w_fx, totalW, totalActions };
-                    }
-                }
-            }
-        }
+        // X: 1I + 1A = 1X
+        craftX = Math.min(curI, curA);
+        curI -= craftX; curA -= craftX; curX += craftX;
+
+        // --- ШАГ 3: ФИНАЛЬНЫЙ СБОР W (из остатков) ---
+        let w_as_2 = Math.min(Math.floor(curA / 3), Math.floor(curS / 2));
+        let w_iz_2 = Math.min(Math.floor(curI / 3), Math.floor(curZ / 2));
+        let w_fx_2 = Math.min(Math.floor(curF / 3), Math.floor(curX / 2));
+
+        let totalExtraW = w_as_2 + w_iz_2 + w_fx_2;
+
+        // Итог
+        let totalW = totalDirectW + totalExtraW;
+        let totalActions = totalDirectW + craftZ + craftS + craftX + totalExtraW;
+        let total_w_final = totalW + W_init;
+        let cost = totalActions * 50;
 
         // Вывод
         const container = document.getElementById('calc-results');
-        if (!bestPlan) {
-            container.innerText = "Не удалось рассчитать план.";
-            return;
-        }
-
-        const cost = bestPlan.totalActions * 50;
-        const total_w_final = bestPlan.totalW + W_init;
-
         let html = `<div style="color: #f1c40f; font-weight: bold; margin-bottom: 10px;">=== ПОШАГОВЫЙ ПЛАН ===</div>`;
 
-        // ШАГ 1: Прямые крафты (из того, что есть в начале)
+        // ШАГ 1
         html += `<div style="color: #2ecc71; margin-bottom: 5px;">1. Прямые крафты (из имеющегося):</div>`;
-        let directW = 0;
-        let directHtml = "";
-        
-        // Считаем прямые крафты отдельно (без учета скрафченных)
-        let tempA = A_init, tempI = I_init, tempF = F_init, tempS = S_init, tempZ = Z_init, tempX = X_init;
-        
-        let d_as = Math.min(Math.floor(tempA / 3), Math.floor(tempS / 2));
-        if (d_as > 0) { directHtml += `Собрать ${d_as} W из 3A+2S<br>`; directW += d_as; tempA -= d_as * 3; tempS -= d_as * 2; }
-        
-        let d_iz = Math.min(Math.floor(tempI / 3), Math.floor(tempZ / 2));
-        if (d_iz > 0) { directHtml += `Собрать ${d_iz} W из 3I+2Z<br>`; directW += d_iz; tempI -= d_iz * 3; tempZ -= d_iz * 2; }
-        
-        let d_fx = Math.min(Math.floor(tempF / 3), Math.floor(tempX / 2));
-        if (d_fx > 0) { directHtml += `Собрать ${d_fx} W из 3F+2X<br>`; directW += d_fx; tempF -= d_fx * 3; tempX -= d_fx * 2; }
-
-        if (directHtml === "") directHtml = "<div style='margin-left:10px; color:#aaa;'>Нет ресурсов для прямого крафта.</div>";
-        html += `<div style="margin-left: 10px; margin-bottom: 5px;">${directHtml}</div>`;
-
-        // ШАГ 2: Крафт ингредиентов
-        html += `<div style="color: #3498db; margin-bottom: 5px; margin-top: 10px;">2. Крафт ингредиентов (для остатка):</div>`;
-        if (bestPlan.craftZ > 0 || bestPlan.craftS > 0 || bestPlan.craftX > 0) {
-            html += `<div style="margin-left: 10px; margin-bottom: 5px;">`;
-            if (bestPlan.craftZ > 0) html += `Сделать ${bestPlan.craftZ} раз: 1F + 1A = 1Z<br>`;
-            if (bestPlan.craftS > 0) html += `Сделать ${bestPlan.craftS} раз: 1F + 1I = 1S<br>`;
-            if (bestPlan.craftX > 0) html += `Сделать ${bestPlan.craftX} раз: 1I + 1A = 1X<br>`;
-            html += `</div>`;
-        } else {
-            html += `<div style="margin-left: 10px; margin-bottom: 5px; color: #aaa;">Скрафченные ингредиенты не нужны.</div>`;
-        }
-
-        // ШАГ 3: Финальный сбор W (из остатков и скрафченного)
-        html += `<div style="color: #e74c3c; margin-bottom: 5px; margin-top: 10px;">3. Финальный сбор W (из остатков и скрафченного):</div>`;
         html += `<div style="margin-left: 10px; margin-bottom: 5px;">`;
-        if (bestPlan.w_as > 0) html += `Собрать ${bestPlan.w_as} W из 3A+2S<br>`;
-        if (bestPlan.w_iz > 0) html += `Собрать ${bestPlan.w_iz} W из 3I+2Z<br>`;
-        if (bestPlan.w_fx > 0) html += `Собрать ${bestPlan.w_fx} W из 3F+2X<br>`;
-        if (bestPlan.w_as === 0 && bestPlan.w_iz === 0 && bestPlan.w_fx === 0) html += `Нет остатков для финального сбора.<br>`;
+        if (w_as > 0) html += `Собрать ${w_as} W из 3A+2S<br>`;
+        if (w_iz > 0) html += `Собрать ${w_iz} W из 3I+2Z<br>`;
+        if (w_fx > 0) html += `Собрать ${w_fx} W из 3F+2X<br>`;
+        if (totalDirectW === 0) html += `Нет ресурсов для прямого крафта.<br>`;
+        html += `</div>`;
+
+        // ШАГ 2
+        html += `<div style="color: #3498db; margin-bottom: 5px; margin-top: 10px;">2. Крафт ингредиентов (из остатков):</div>`;
+        html += `<div style="margin-left: 10px; margin-bottom: 5px;">`;
+        if (craftZ > 0) html += `Сделать ${craftZ} раз: 1F + 1A = 1Z<br>`;
+        if (craftS > 0) html += `Сделать ${craftS} раз: 1F + 1I = 1S<br>`;
+        if (craftX > 0) html += `Сделать ${craftX} раз: 1I + 1A = 1X<br>`;
+        if (craftZ === 0 && craftS === 0 && craftX === 0) html += `Скрафченные ингредиенты не нужны.<br>`;
+        html += `</div>`;
+
+        // ШАГ 3
+        html += `<div style="color: #e74c3c; margin-bottom: 5px; margin-top: 10px;">3. Финальный сбор W (из остатков):</div>`;
+        html += `<div style="margin-left: 10px; margin-bottom: 5px;">`;
+        if (w_as_2 > 0) html += `Собрать ${w_as_2} W из 3A+2S<br>`;
+        if (w_iz_2 > 0) html += `Собрать ${w_iz_2} W из 3I+2Z<br>`;
+        if (w_fx_2 > 0) html += `Собрать ${w_fx_2} W из 3F+2X<br>`;
+        if (totalExtraW === 0) html += `Нет остатков для финального сбора.<br>`;
         html += `</div>`;
 
         // ИТОГ
         html += `<div style="color: #f1c40f; margin-bottom: 5px; margin-top: 10px; font-weight: bold;">=== ИТОГ ===</div>`;
         html += `<div style="margin-left: 10px;">`;
-        html += `Новых W: <span style="color: #2ecc71; font-weight: bold;">${bestPlan.totalW}</span><br>`;
-        html += `Всего W: <span style="color: #f39c12; font-weight: bold;">${total_w_final}</span><br>`;
-        html += `Потрачено действий: ${bestPlan.totalActions}<br>`;
+        html += `Прямых W: ${totalDirectW}<br>`;
+        html += `Дополнительных W (из остатков): ${totalExtraW}<br>`;
+        html += `<b>Новых W: <span style="color: #2ecc71;">${totalW}</span></b><br>`;
+        html += `<b>Всего W: <span style="color: #f39c12;">${total_w_final}</span></b><br>`;
+        html += `Потрачено действий: ${totalActions}<br>`;
         html += `Стоимость: ${cost} валюты<br>`;
         html += `</div>`;
 
