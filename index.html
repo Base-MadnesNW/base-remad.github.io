@@ -76,6 +76,8 @@
       padding: 0 20px;
     }
 
+    
+
     /* Шапка */
     header {
       padding: 34px 0 20px;
@@ -349,7 +351,126 @@
     .floor-content.open {
       display: block;
     }
+/* --- СТИЛИ ДЛЯ ЗАПИСКИ ДОЛГОВ --- */
+    @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap');
 
+    .paper-wrapper {
+        background-color: #fcf6e8;
+        background-image: repeating-linear-gradient(transparent, transparent 31px, #dbe6f0 31px, #dbe6f0 32px);
+        padding: 25px 30px;
+        border-radius: 2px 8px 8px 2px;
+        box-shadow: 3px 5px 15px rgba(0,0,0,0.4), inset 0 0 30px rgba(0,0,0,0.05);
+        position: relative;
+        transform: rotate(-0.5deg);
+        font-family: 'Caveat', cursive;
+        color: #1a2530;
+        max-width: 600px;
+        margin: 0 auto;
+        border-left: 5px solid #d4a373; /* Корешок блокнота */
+    }
+
+    /* Эффект "загнутого уголка" */
+    .paper-wrapper::after {
+        content: "";
+        position: absolute;
+        bottom: 0; right: 0;
+        border-width: 0 25px 25px 0;
+        border-style: solid;
+        border-color: transparent transparent #e3d1b0 transparent;
+        box-shadow: -2px -2px 5px rgba(0,0,0,0.1);
+    }
+
+    .paper-title {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        color: #2c3e50;
+        margin-bottom: 5px;
+        border-bottom: 2px solid #2c3e50;
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+
+    .paper-floor-header {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #c0392b;
+        margin-top: 15px;
+        margin-bottom: 5px;
+    }
+
+    .paper-boss-row {
+        display: flex;
+        align-items: baseline;
+        font-size: 1.3rem;
+        margin-bottom: 3px;
+        position: relative;
+    }
+
+    .paper-boss-name {
+        font-weight: 700;
+        min-width: 130px;
+    }
+
+    .paper-boss-items {
+        color: #34495e;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .paper-checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .paper-checkbox-label:hover {
+        color: #c0392b;
+    }
+
+    /* Рисуем квадратик вместо стандартного чекбокса */
+    .paper-checkbox-label input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #2c3e50;
+        border-radius: 2px;
+        cursor: pointer;
+        position: relative;
+        background: transparent;
+    }
+
+    .paper-checkbox-label input[type="checkbox"]:checked {
+        background: #2c3e50;
+    }
+
+    /* Галочка (крестик) внутри квадратика */
+    .paper-checkbox-label input[type="checkbox"]:checked::after {
+        content: "✕";
+        position: absolute;
+        top: -6px;
+        left: 0px;
+        color: #fcf6e8;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    /* Зачеркиваем текст, если предмет выбит */
+    .paper-checkbox-label input[type="checkbox"]:checked + span {
+        text-decoration: line-through;
+        color: #7f8c8d;
+    }
+
+    .paper-empty {
+        text-align: center;
+        font-size: 1.5rem;
+        color: #27ae60;
+        margin-top: 20px;
+    }
     /* Сетки карточек */
     .cards-grid {
       display: grid;
@@ -3485,92 +3606,79 @@
     }
 
    // --- ЛОГИКА ДОЛГОВ БУЙНЫХ (ПО ЭТАЖАМ) ---
-    function renderDebts() {
+   function renderDebts() {
         const container = document.getElementById("debtList");
         if (!container) return;
         
-        // Группируем боссов по этажам
+        let html = `<div style="text-align: center; margin-bottom: 15px;"><span class="paper-title">Мои долги</span></div>`;
         const floors = [...new Set(bosses.map(b => b.floor.split('-')[0]))].sort();
-        let html = "";
+        let hasDebts = false;
 
         floors.forEach(floor => {
             const floorBosses = bosses.filter(b => b.floor.startsWith(floor));
             let floorDebtHtml = "";
-            let floorDebtsCount = 0;
 
             floorBosses.forEach(boss => {
-                // Пропускаем, если нет дропа или только комната
                 if (!boss.drop || boss.drop === "Комната" || boss.drop === "?" || boss.drop === "—") return;
 
-                // Разбираем дроп
                 let items = [];
                 if (boss.drop.includes('|')) {
                     const parts = boss.drop.split('|');
-                    let maleItems = parts[0].replace('(М):', '').split(',').map(s => s.trim());
-                    let femaleItems = parts[1].replace('(Ж):', '').split(',').map(s => s.trim());
-                    items = [...new Set([...maleItems, ...femaleItems])];
+                    items = [...new Set([
+                        ...parts[0].replace('(М):', '').split(',').map(s => s.trim()),
+                        ...parts[1].replace('(Ж):', '').split(',').map(s => s.trim())
+                    ])];
                 } else {
                     items = boss.drop.split(',').map(s => s.trim());
                 }
-
                 items = items.filter(i => i && i !== "Комната");
-                let missingItems = [];
 
+                let missingItemsHtml = "";
                 items.forEach(item => {
                     const cleanName = item.replace(/\(x\d+\)/g, '').trim();
                     let isFound = false;
-                    
-                    // Проверяем галочки в localStorage
                     const possiblePrefixes = ['M', 'F', 'S', ''];
                     for (let prefix of possiblePrefixes) {
-                        const key = `drop_${boss.name}_${prefix}_${cleanName}`;
-                        if (localStorage.getItem(key) === 'true') {
+                        if (localStorage.getItem(`drop_${boss.name}_${prefix}_${cleanName}`) === 'true') {
                             isFound = true;
                             break;
                         }
                     }
-
-                    if (!isFound) missingItems.push(item);
+                    
+                    // Если галочка НЕ стоит, показываем предмет в записке
+                    if (!isFound) {
+                        const id = `paper_${boss.name}_${cleanName}`;
+                        missingItemsHtml += `
+                            <label class="paper-checkbox-label" style="margin-right: 10px;">
+                                <input type="checkbox" onchange="this.parentElement.querySelector('span').style.textDecoration = this.checked ? 'line-through' : 'none'">
+                                <span>${item}</span>
+                            </label>
+                        `;
+                    }
                 });
 
-                if (missingItems.length > 0) {
-                    floorDebtsCount++;
+                if (missingItemsHtml !== "") {
+                    hasDebts = true;
                     floorDebtHtml += `
-                    <div style="background: rgba(0,0,0,0.3); padding: 10px; margin-bottom: 8px; border-radius: 6px; border-left: 3px solid #e74c3c;">
-                        <div style="font-weight: bold; color: #f39c12; margin-bottom: 5px;">
-                            ${boss.name} <span style="font-size: 12px; color: #888;">(${boss.floor})</span>
+                        <div class="paper-boss-row">
+                            <span class="paper-boss-name">${boss.name}:</span>
+                            <div class="paper-boss-items">${missingItemsHtml}</div>
                         </div>
-                        <div style="font-size: 13px; color: #ccc;">
-                            Не выбито: <span style="color: #ff6b6b;">${missingItems.join(', ')}</span>
-                        </div>
-                    </div>`;
+                    `;
                 }
             });
 
-            // Если на этаже есть долги, добавляем подвкладку
-            if (floorDebtsCount > 0) {
-                const subFloorId = `debt-floor-${floor}`;
-                html += `
-                <div style="margin-bottom: 10px;">
-                    <button class="floor-header" onclick="toggleFloor('${subFloorId}')" style="background: rgba(255,255,255,0.05); border-left-color: var(--gold); font-size: 14px; padding: 10px;">
-                        <span>Этаж ${floor} <span style="color: #888; font-size: 12px; margin-left: 10px;">(долгов: ${floorDebtsCount})</span></span>
-                        <span class="arrow-icon">▼</span>
-                    </button>
-                    <!-- По умолчанию этажи тоже свернуты -->
-                    <div class="floor-content" id="${subFloorId}" style="padding-top: 10px;">
-                        ${floorDebtHtml}
-                    </div>
-                </div>`;
+            if (floorDebtHtml !== "") {
+                html += `<div class="paper-floor-header">Этаж ${floor}</div>${floorDebtHtml}`;
             }
         });
 
-        if (html === "") {
-            container.innerHTML = `<div style="text-align: center; padding: 20px; color: #2ecc71; font-weight: bold;">🎉 Все вещи выбиты! Долгов нет.</div>`;
-        } else {
-            container.innerHTML = html;
+        if (!hasDebts) {
+            html += `<div class="paper-empty">Все долги закрыты! 🎉</div>`;
         }
-    }
 
+        container.innerHTML = html;
+    }
 
     // Инициализация
     renderDebts();
